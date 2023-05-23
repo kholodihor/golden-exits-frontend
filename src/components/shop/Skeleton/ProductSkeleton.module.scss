@@ -1,0 +1,24 @@
+.skeleton {
+    background-color: #fff;
+    border: 1px solid #dedede;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  
+    &Content {
+      padding: 1.5rem;
+    }
+  
+    &Info {
+      margin-left: 3rem;
+    }
+  }
+  
+  .skeletonUser {
+    display: flex;
+  
+    &Details {
+      display: flex;
+      flex-direction: column;
+    }
+  }

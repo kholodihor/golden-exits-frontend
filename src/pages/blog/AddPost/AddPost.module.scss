@@ -1,0 +1,38 @@
+.title {
+  input {
+    font-size: 2rem;
+    font-weight: 900;
+  }
+}
+
+.image {
+  display: block;
+  width: 80%;
+  margin: 1rem auto;
+}
+
+
+.editor {
+  margin: 2rem -2rem;
+
+  :global {
+    .cm-s-easymde {
+      border: 0;
+      font-size: 1.2rem;
+      color: black;
+    }
+    .editor-toolbar {
+      border: 0;
+      background-color: var(--golden);
+      color: black;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+
+  button {
+    margin-right: 1rem;
+  }
+}

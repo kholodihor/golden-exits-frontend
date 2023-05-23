@@ -1,0 +1,68 @@
+.Tabs {
+    margin: 2rem 0;
+    padding: 2rem;
+    .title {
+      margin-bottom: 2rem;
+  
+      h1 {
+        font-size: 2rem;
+        margin-left: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        font-weight: 300;
+        color: var(--black);
+        margin-bottom: -1rem;
+        @media screen and (max-width: 550px) {
+          font-size: 2rem;
+          text-align: center;
+          margin-left: 0;
+        }
+        @media screen and (max-width: 450px) {
+          font-size: 1.5rem;
+          text-align: center;
+        }
+      }
+      p {
+        position: relative;
+        font-size: 0.8rem;
+        color: var(--golden);
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        margin-left: 4rem;
+        margin-top: 0.5rem;
+        @media screen and (max-width: 550px) {
+          margin-left: 0;
+          text-align: center;
+        }
+      }
+    }
+    .tabheader {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: flex-start;
+      gap: 0.3rem;
+      @media screen and (max-width: 450px) {
+        flex-direction: column;
+        justify-content: center;
+      }
+      button {
+        padding: 1rem 2rem;
+        text-transform: uppercase;
+        background: var(--black);
+        color: var(--golden);
+        border: none;
+        outline: none;
+        cursor: pointer;
+        @media screen and (max-width: 550px) {
+          padding: 0.7rem 1.3rem;
+        }
+  
+        &:hover {
+          background-color: var(--darkgray);
+        }
+        &.active {
+          background-color: var(--darkgray);
+        }
+      }
+    }
+  }

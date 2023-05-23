@@ -1,0 +1,84 @@
+.Header {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+  @media screen and (max-width: 915px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  .logo {
+    font-size: 2.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-weight: 300;
+    color: var(--black);
+    text-align: center;
+    span {
+      color: var(--golden);
+    }
+
+    @media screen and (max-width: 550px) {
+      font-size: 2rem;
+      text-align: center;
+      margin-left: 0;
+    }
+  }
+
+  .button {
+    padding: 0.5rem 1.3rem;
+    margin-right: 1rem;
+    outline: none;
+    border-radius: 0.2rem;
+    background: #fff;
+    color: var(--golden);
+    text-transform: uppercase;
+    border: 1px solid var(--golden);
+    &:hover {
+      background: var(--golden);
+      color: #fff;
+      border: 1px solid transparent;
+    }
+    @media screen and (max-width: 450px) {
+      padding: 0.5rem 1rem;
+    }
+  }
+  .logout {
+    padding: 0.5rem 1.3rem;
+    outline: none;
+    border-radius: 0.2rem;
+    background: #fff;
+    color: var(--red);
+    text-transform: uppercase;
+    border: 1px solid var(--red);
+    &:hover {
+      background: var(--red);
+      color: #fff;
+      border: 1px solid transparent;
+    }
+  }
+  .userActions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .avatarBox {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+      margin-right: 1rem;
+      img {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 100%;
+        object-fit: cover;
+      }
+      span {
+        font-size: 0.7rem;
+      }
+    }
+  }
+}

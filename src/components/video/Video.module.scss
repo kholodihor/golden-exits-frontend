@@ -1,0 +1,83 @@
+.Video {
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  position: relative;
+
+  &:hover {
+    .title a {
+      color: var(--golden);
+    }
+  }
+  .video {
+    width: 100%;
+    max-height: 25rem;
+    min-height: 15rem;
+    object-fit: cover;
+  }
+
+  .wrapper {
+    padding: 1rem 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10%;
+    @media screen and (max-width: 450px) {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .content {
+      flex: 1;
+
+      .title {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin: 0;
+        @media screen and (max-width: 450px) {
+          font-size: 1rem;
+        }
+
+        a {
+          color: #000;
+          font-weight: 300;
+        }
+      }
+
+      p {
+        font-size: 1rem;
+        color: var(--golden);
+        margin: 0;
+      }
+    }
+    .actions {
+      padding: 0 1rem;
+      flex: 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 5px;
+      color: var(--darkgray);
+      font-size: 1rem;
+      cursor: pointer;
+      @media screen and (max-width: 450px) {
+        flex: 1;
+        text-align: center;
+      }
+      .views {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .likes {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--red);
+      }
+    }
+  }
+}

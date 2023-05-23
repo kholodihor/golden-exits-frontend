@@ -1,0 +1,117 @@
+.AboutGE {
+    margin: 2rem 0;
+    padding: 2rem;
+    background-color: #eee;
+    @media screen and (max-width: 550px) {
+   padding: 1rem;
+    }
+    .title {
+      margin-bottom: 2rem;
+  
+      h1 {
+        font-size: 2rem;
+        margin-left: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        font-weight: 300;
+        color: var(--black);
+        margin-bottom: -1rem;
+        @media screen and (max-width: 550px) {
+          font-size: 2rem;
+          text-align: center;
+          margin-left: 0;
+        }
+        @media screen and (max-width: 450px) {
+          font-size: 1.5rem;
+          text-align: center;
+        }
+        span {
+          color: var(--golden);
+        }
+      }
+      p {
+        position: relative;
+        font-size: 0.8rem;
+        color: var(--golden);
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        margin-left: 4rem;
+        margin-top: 0.5rem;
+        @media screen and (max-width: 550px) {
+          margin-left: 0;
+          text-align: center;
+        }
+      }
+    }
+    .inner {
+      display: flex;
+      @media screen and (max-width: 1200px) {
+        flex-direction: column;
+      }
+      .grid {
+        flex: 1 1 50%;
+        display: flex;
+        flex-wrap: wrap;
+        @media screen and (max-width: 1200px) {
+          width: 100%;
+          justify-content: center;
+          align-items: center;
+        }
+        img {
+          transition: all 0.2s ease-in-out;
+        }
+        img:hover {
+          filter: blur(4px);
+        }
+      }
+      .textbox {
+        flex: 1 1 50%;
+        border: 1px solid var(--golden);
+        padding: 1rem;
+        @media screen and (max-width: 1200px) {
+          width: 100%;
+        }
+        @media screen and (max-width: 550px) {
+          padding: 0.5rem;
+           }
+        &_inner {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          text-align: left;
+          flex-direction: column;
+          background-color: #fff;
+          padding: 2rem;
+          border: 1px solid var(--golden);
+          h2 {
+            padding: 1rem 0;
+            text-transform: uppercase;
+            color: var(--darkgray);
+            @media screen and (max-width: 550px) {
+              padding: 0.5rem;
+              text-align: center;
+              font-size: 1rem;
+            }
+          }
+          p {
+            color: var(--lightgray);
+            font-size: 0.9rem;
+            @media screen and (max-width: 550px) {
+              padding: 0.5rem;
+              text-align: center;
+              font-size: 0.8rem;
+            }
+          }
+          span {
+            color: var(--golden);
+            text-align: left;
+            @media screen and (max-width: 550px) {
+              padding: 0.5rem;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
