@@ -8,6 +8,7 @@ import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import Header from '@/components/common/Header/Header';
 import Intro from '@/components/common/Intro/Intro';
+import Error from '@/components/common/Error/Error';
 
 export const Blog = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,8 @@ export const Blog = () => {
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
+
+  if (posts.status === 'error') return <Error />;
 
   return (
     <>

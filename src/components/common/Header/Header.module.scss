@@ -32,6 +32,7 @@
     padding: 0.5rem 1.3rem;
     margin-right: 1rem;
     outline: none;
+    white-space: nowrap;
     border-radius: 0.2rem;
     background: #fff;
     color: var(--golden);
@@ -44,6 +45,7 @@
     }
     @media screen and (max-width: 450px) {
       padding: 0.5rem 1rem;
+      font-size: 0.8rem;
     }
   }
   .logout {

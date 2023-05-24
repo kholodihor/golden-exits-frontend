@@ -8,11 +8,24 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    width: 100%;
     height: 100vh;
     @media screen and (max-width: 850px) {
       text-align: center;
       flex-direction: column;
       gap: 2rem;
+    }
+    .dropzone {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50vw;
+      height: 340px;
+      border: 1px solid #d0af51;
+      margin: 0 auto;
+      @media screen and (max-width: 650px) {
+       width: 80vw;
+      }
     }
 
     input,

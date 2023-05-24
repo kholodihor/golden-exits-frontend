@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ProductSkeleton } from '../Skeleton/ProductSkeleton';
 import { Paper } from '@mui/material';
 import styles from './Products.module.scss';
+import Error from '../../common/Error/Error';
 
 const Products = ({ query }) => {
   const dispatch = useDispatch();
@@ -18,11 +19,12 @@ const Products = ({ query }) => {
     product.category.includes(query)
   );
 
+  if (products.status === 'error') return <Error />;
+
   const isProductsLoading = products.status === 'loading';
 
   return (
     <div className={styles.Products}>
-              <h1>{query}</h1>
       <div className={styles.gridbox}>
         {(isProductsLoading ? [...Array(6)] : filteredProducts).map(
           (product, index) =>

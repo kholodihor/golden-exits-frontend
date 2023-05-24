@@ -83,14 +83,8 @@ export const UploadVideo = () => {
             {({ getRootProps, getInputProps }) => (
               <section>
                 <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '500px',
-                    height: '340px',
-                    border: '1px solid #d0af51',
-                  }}
+                className={styles.dropzone}
+           
                   {...getRootProps()}
                 >
                   <input {...getInputProps()} />

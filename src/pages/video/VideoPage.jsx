@@ -8,6 +8,7 @@ import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import { Video } from '@/components/video/Video';
 import Intro from '@/components/common/Intro/Intro';
 import Header from '@/components/common/Header/Header';
+import Error from '@/components/common/Error/Error';
 import Grid from '@mui/material/Grid';
 
 export const VideoPage = () => {
@@ -21,6 +22,8 @@ export const VideoPage = () => {
   useEffect(() => {
     dispatch(fetchVideos());
   }, [dispatch]);
+
+  if (videos.status === 'error') return <Error />;
 
   return (
     <>

@@ -37,27 +37,28 @@ const commentSlice = createSlice({
   name: 'comment',
   initialState,
   reducers: {},
-  extraReducers: {
-    [createComment.pending]: (state) => {
-      state.loading = true;
-    },
-    [createComment.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.comments.push(action.payload);
-    },
-    [createComment.rejected]: (state) => {
-      state.loading = false;
-    },
-    [getPostComments.pending]: (state) => {
-      state.loading = true;
-    },
-    [getPostComments.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.comments = action.payload;
-    },
-    [getPostComments.rejected]: (state) => {
-      state.loading = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createComment.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.comments.push(action.payload);
+      })
+      .addCase(createComment.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(getPostComments.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPostComments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.comments = action.payload;
+      })
+      .addCase(getPostComments.rejected, (state) => {
+        state.loading = false;
+      });
   },
 });
 

@@ -85,7 +85,7 @@ export const AddPost = () => {
       spellChecker: false,
       maxHeight: '400px',
       autofocus: true,
-      placeholder: 'Enter text...',
+      placeholder: 'Content of Your Post',
       status: false,
       autosave: {
         enabled: true,

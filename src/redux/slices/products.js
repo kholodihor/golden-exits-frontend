@@ -17,19 +17,20 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
     name: 'products',
     initialState,
     reducers: {},
-    extraReducers: {
-      [fetchProducts.pending]: (state) => {
-        state.products.items = [];
-        state.products.status = 'loading';
-      },
-      [fetchProducts.fulfilled]: (state, action) => {
-        state.products.items = action.payload;
-        state.products.status = 'loaded';
-      },
-      [fetchProducts.rejected]: (state) => {
-        state.products.items = [];
-        state.products.status = 'error';
-      },
+    extraReducers: (builder) => {
+      builder
+        .addCase(fetchProducts.pending, (state) => {
+          state.products.items = [];
+          state.products.status = 'loading';
+        })
+        .addCase(fetchProducts.fulfilled, (state, action) => {
+          state.products.items = action.payload;
+          state.products.status = 'loaded';
+        })
+        .addCase(fetchProducts.rejected, (state) => {
+          state.products.items = [];
+          state.products.status = 'error';
+        })
     },
   });
 

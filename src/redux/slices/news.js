@@ -19,17 +19,18 @@ const newsSlice = createSlice({
   name: 'news',
   initialState,
   reducers: {},
-  extraReducers: {
-    [getNews.pending]: (state) => {
-      state.loading = true;
-    },
-    [getNews.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.news = action.payload;
-    },
-    [getNews.rejected]: (state) => {
-      state.loading = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getNews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getNews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.news = action.payload;
+      })
+      .addCase(getNews.rejected, (state) => {
+        state.loading = false;
+      })
   },
 });
 

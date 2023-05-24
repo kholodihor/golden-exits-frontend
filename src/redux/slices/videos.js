@@ -22,19 +22,20 @@ const videoSlice = createSlice({
   name: 'videos',
   initialState,
   reducers: {},
-  extraReducers: {
-    [fetchVideos.pending]: (state) => {
-      state.videos.items = [];
-      state.videos.status = 'loading';
-    },
-    [fetchVideos.fulfilled]: (state, action) => {
-      state.videos.items = action.payload;
-      state.videos.status = 'loaded';
-    },
-    [fetchVideos.rejected]: (state) => {
-      state.videos.items = [];
-      state.videos.status = 'error';
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchVideos.pending, (state) => {
+        state.videos.items = [];
+        state.videos.status = 'loading';
+      })
+      .addCase(fetchVideos.fulfilled, (state, action) => {
+        state.videos.items = action.payload;
+        state.videos.status = 'loaded';
+      })
+      .addCase(fetchVideos.rejected, (state) => {
+        state.videos.items = [];
+        state.videos.status = 'error';
+      })
   },
 });
 

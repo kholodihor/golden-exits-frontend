@@ -22,24 +22,31 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {},
-  extraReducers: {
-    [fetchPosts.pending]: (state) => {
-      state.posts.items = [];
-      state.posts.status = 'loading';
-    },
-    [fetchPosts.fulfilled]: (state, action) => {
-      state.posts.items = action.payload;
-      state.posts.status = 'loaded';
-    },
-    [fetchPosts.rejected]: (state) => {
-      state.posts.items = [];
-      state.posts.status = 'error';
-    },
-    [fetchRemovePost.pending]: (state, action) => {
-      state.posts.items = state.posts.items.filter(
-        (item) => item._id !== action.meta.arg
-      );
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPosts.pending, (state) => {
+        state.posts.items = [];
+        state.posts.status = 'loading';
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.posts.items = action.payload;
+        state.posts.status = 'loaded'
+      })
+      .addCase(fetchPosts.rejected, (state) => {
+        state.posts.items = [];
+        state.posts.status = 'error';
+      })
+      .addCase(fetchRemovePost.pending, (state) => {
+        state.posts.items = state.posts.items.filter(
+          (item) => item._id !== action.meta.arg
+        );
+      })
+      .addCase(fetchRemovePost.fulfilled, (state, action) => {
+        state.posts.status = 'loaded';
+      })
+      .addCase(fetchRemovePost.rejected, (state) => {
+        state.posts.status = 'error';
+      });
   },
 });
 
