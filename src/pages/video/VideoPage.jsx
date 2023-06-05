@@ -56,11 +56,7 @@ export const VideoPage = () => {
                     views={video.views}
                     likes={video.likes}
                     isEditable={userData?._id === video.user._id}
-                    videoUrl={
-                      video.url
-                        ? `${import.meta.env.VITE_APP_API_URL}${video.url}`
-                        : ''
-                    }
+                    videoUrl={video.url ? video.url : ''}
                   />
                 )
             )}

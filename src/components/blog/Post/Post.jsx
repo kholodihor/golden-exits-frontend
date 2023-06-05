@@ -58,7 +58,7 @@ export const Post = ({
     <Paper className={styles.Post}>
       {isEditable && (
         <div className={styles.editButtons}>
-          <Link to={`/posts/${id}/add-or-edit`}>
+          <Link to={`/edit-post/${id}`}>
             <IconButton color="primary">
               <EditIcon />
             </IconButton>

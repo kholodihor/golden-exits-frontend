@@ -6,6 +6,7 @@ import { Register } from './pages/register/Register';
 import { Blog } from './pages/blog/Blog';
 import { SinglePost } from './pages/blog/SinglePost';
 import { AddPost } from './pages/blog/AddPost/AddPost';
+import { EditPost } from './pages/blog/EditPost/EditPost';
 import { Shop } from './pages/shop/Shop';
 import { Product } from './pages/shop/Product/Product';
 import { Cart } from './pages/shop/Cart/Cart';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/posts/:id" element={<SinglePost />} />
           <Route path="/add-post" element={<AddPost />} />
+          <Route path="/edit-post/:id" element={<EditPost />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/product/:id" element={<Product />} />

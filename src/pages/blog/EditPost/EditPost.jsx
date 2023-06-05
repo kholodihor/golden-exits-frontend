@@ -8,10 +8,10 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import SimpleMDE from 'react-simplemde-editor';
 import axios from '@/utils/axios';
-import styles from './AddPost.module.scss';
+import styles from './EditPost.module.scss';
 import 'easymde/dist/easymde.min.css';
 
-export const AddPost = () => {
+export const EditPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
@@ -43,24 +43,6 @@ export const AddPost = () => {
     setText(value);
   }, []);
 
-  const onSubmit = async () => {
-    try {
-      const { data } = await axios.post('/upload', { image });
-      const values = {
-        title,
-        text,
-        imageUrl: data.url,
-      };
-      isEditing
-        ? await axios.patch(`/posts/${id}`, values)
-        : await axios.post('/posts', values);
-      navigate(`/blog`);
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-    }
-  };
-
   useEffect(() => {
     if (id) {
       axios
@@ -71,11 +53,27 @@ export const AddPost = () => {
           setImage(data.imageUrl);
         })
         .catch((err) => {
-          console.warn(err);
+          console.error(err);
           alert(err.message);
         });
     }
   }, [id]);
+
+  const onSubmit = async () => {
+    try {
+      const { data } = await axios.post('/upload', { image });
+      const values = {
+        title,
+        text,
+        imageUrl: data.url,
+      };
+      await axios.patch(`/posts/${id}`, values);
+      navigate(`/blog`);
+    } catch (err) {
+      console.warn(err);
+      alert(err.message);
+    }
+  };
 
   const options = useMemo(
     () => ({
@@ -122,7 +120,6 @@ export const AddPost = () => {
             <img
               className={styles.image}
               src={image}
-              // src={`${import.meta.env.VITE_APP_API_URL}${imageUrl}`}
               alt="Uploaded"
             />
           </>

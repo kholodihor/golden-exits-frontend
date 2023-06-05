@@ -30,7 +30,6 @@
 
   .button {
     padding: 0.5rem 1.3rem;
-    margin-right: 1rem;
     outline: none;
     white-space: nowrap;
     border-radius: 0.2rem;
@@ -66,12 +65,12 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    gap: 0.5rem;
     .avatarBox {
       display: flex;
       justify-content: space-around;
       align-items: center;
       flex-direction: column;
-      margin-right: 1rem;
       img {
         width: 3rem;
         height: 3rem;
@@ -81,6 +80,9 @@
       span {
         font-size: 0.7rem;
       }
+    }
+    @media screen and (max-width: 450px) {
+      flex-direction: column;
     }
   }
 }

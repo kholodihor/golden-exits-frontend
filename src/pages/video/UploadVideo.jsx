@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import React, { useState } from 'react';
+import axios from '@/utils/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -8,12 +9,11 @@ import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Dropzone from 'react-dropzone';
 import styles from './UploadVideo.module.scss';
-import axios from '@/utils/axios';
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.data);
-  const [videoUrl, setVideoUrl] = useState('');
+  const [video, setVideo] = useState('');
   const [videoName, setVideoName] = useState('');
   const [uploading, setUploading] = useState(false);
 
@@ -35,40 +35,36 @@ export const UploadVideo = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = async (values) => {
-    const fields = {
-      user: userData._id,
-      title: values.title,
-      genre: values.genre,
-      url: videoUrl,
-      likes: {},
+  const setFileToBase64 = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setVideo(reader.result);
     };
-
-    axios.post('/videos', fields).then((response) => {
-      console.log(response);
-      try {
-        alert(`Video '${response.data.title}' Uploaded Successfully`);
-        navigate('/video');
-      } catch (error) {
-        alert(error.message);
-      }
-    });
   };
 
   const onDrop = async (files) => {
+    const file = files[0];
+    setVideoName(file.name);
+    setFileToBase64(file);
+  };
+
+  const onSubmit = async (values) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      const file = files[0];
-      formData.append('file', file);
-      const { data } = await axios.post('/uploadvideo', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const { data } = await axios.post('/uploadvideo', { video });
+      const fields = {
+        user: userData._id,
+        title: values.title,
+        genre: values.genre,
+        url: data.url,
+        likes: {},
+      };
+      axios.post('/videos', fields).then((response) => {
+        setUploading(false);
+        alert(`Video '${response.data.title}' Uploaded Successfully`);
+        navigate('/video');
       });
-      setUploading(false);
-      setVideoUrl(data.url);
-      setVideoName(data.fileName);
     } catch (error) {
       console.log(error.message);
     }
@@ -78,15 +74,11 @@ export const UploadVideo = () => {
     <div className={styles.UploadVideo}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.left}>
-          <h1>Upload your Video</h1>
+          <h1>Upload your Video with max size 9mb</h1>
           <Dropzone onDrop={onDrop} multiple={false} maxSize={8000000000}>
             {({ getRootProps, getInputProps }) => (
               <section>
-                <div
-                className={styles.dropzone}
-           
-                  {...getRootProps()}
-                >
+                <div className={styles.dropzone} {...getRootProps()}>
                   <input {...getInputProps()} />
                   {uploading && (
                     <p>Wait a little while we are uploading your video...</p>
@@ -122,7 +114,7 @@ export const UploadVideo = () => {
             label="Genre"
             fullWidth
           />
-          <button type="submit" size="large" disabled={!videoUrl}>
+          <button type="submit" size="large" disabled={!video}>
             Submit
           </button>
         </div>

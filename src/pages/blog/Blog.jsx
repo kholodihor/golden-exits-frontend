@@ -47,11 +47,7 @@ export const Blog = () => {
                   text={post.text}
                   likes={post.likes}
                   comments={post.comments}
-                  imageUrl={
-                    post.imageUrl
-                      ? `${import.meta.env.VITE_APP_API_URL}${post.imageUrl}`
-                      : ''
-                  }
+                  imageUrl={post.imageUrl ? post.imageUrl : ''}
                   user={post.user}
                   createdAt={post.createdAt}
                   isEditable={userData?._id === post.user._id}
