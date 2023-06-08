@@ -1,19 +1,43 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout, selectIsAuth } from '@/redux/slices/auth';
 import { Paper, Button } from '@mui/material';
+import Confirm from '@/components/common/Confirm/Confirm';
 import styles from './Header.module.scss';
 
 const Header = ({ title, buttonTitle, to }) => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const user = useSelector((state) => state.auth.data);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: '',
+    subtitle: '',
+  });
 
-  const onClickLogout = () => {
-    if (window.confirm('Are you sure you want to log out?')) {
-      dispatch(logout());
-      window.localStorage.removeItem('token');
-    }
+  const handleLogout = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Are you sure you want to log out?',
+      subtitle: '',
+      onConfirm: () => {
+        logOut();
+      },
+    });
+    // if (window.confirm('Are you sure you want to log out?')) {
+    //   dispatch(logout());
+    //   window.localStorage.removeItem('token');
+    // }
+  };
+
+  const logOut = () => {
+    dispatch(logout());
+    window.localStorage.removeItem('token');
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
   };
 
   return (
@@ -31,22 +55,26 @@ const Header = ({ title, buttonTitle, to }) => {
               <Link to={to}>
                 <Button className={styles.button}>{buttonTitle}</Button>
               </Link>
-              <Button onClick={onClickLogout} className={styles.logout}>
+              <Button onClick={handleLogout} className={styles.logout}>
                 LogOut
               </Button>
             </div>
           ) : (
-            <>
+            <div className={styles.userActions}>
               <Link to="/login">
                 <Button className={styles.button}>LogIn</Button>
               </Link>
               <Link to="/register">
                 <Button className={styles.button}>Create Account</Button>
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
+      <Confirm
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
     </Paper>
   );
 };

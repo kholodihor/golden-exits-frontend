@@ -38,7 +38,7 @@ export const BlogAside = () => {
         isNewsLoading ? (
           <PostSkeleton key={index} />
         ) : (
-          <article className={styles.recentposts} key={article._id}>
+          <article className={styles.article} key={article._id}>
             <div className={styles.flex}>
               <div className={styles.image}>
                 <img src={article.imageUrl} alt={article.title} />

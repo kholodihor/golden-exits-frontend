@@ -6,7 +6,7 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   return data;
 });
 
-export const fetchRemovePost = createAsyncThunk(
+export const removePost = createAsyncThunk(
   'posts/fetchRemovePost',
   async (id) => axios.delete(`/posts/${id}`)
 );
@@ -22,6 +22,10 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {},
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
   extraReducers: (builder) => {
     builder
       .addCase(fetchPosts.pending, (state) => {
@@ -30,22 +34,16 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts.items = action.payload;
-        state.posts.status = 'loaded'
+        state.posts.status = 'loaded';
       })
       .addCase(fetchPosts.rejected, (state) => {
         state.posts.items = [];
         state.posts.status = 'error';
       })
-      .addCase(fetchRemovePost.pending, (state) => {
+      .addCase(removePost.fulfilled, (state, action) => {
         state.posts.items = state.posts.items.filter(
           (item) => item._id !== action.meta.arg
         );
-      })
-      .addCase(fetchRemovePost.fulfilled, (state, action) => {
-        state.posts.status = 'loaded';
-      })
-      .addCase(fetchRemovePost.rejected, (state) => {
-        state.posts.status = 'error';
       });
   },
 });
