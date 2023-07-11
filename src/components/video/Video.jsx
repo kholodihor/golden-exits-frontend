@@ -24,7 +24,7 @@ export const Video = ({
   const [likeCount, setLikeCount] = useState(Object.keys(likes).length);
 
   const handleViewsCount = async () => {
-    if (videoRef.current !== undefined && videoRef.current.currentTime === 0) {
+    if (videoRef.current !== undefined && videoRef.current.currentTime <= 1) {
       setViewsCount((prev) => prev + 1);
       try {
         await axios.patch(`/videos/${id}`, {

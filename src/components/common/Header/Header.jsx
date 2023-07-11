@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout, selectIsAuth } from '@/redux/slices/auth';
@@ -16,6 +16,7 @@ const Header = ({ title, buttonTitle, to }) => {
     subtitle: '',
   });
 
+  
   const handleLogout = () => {
     setConfirmDialog({
       isOpen: true,
@@ -25,10 +26,6 @@ const Header = ({ title, buttonTitle, to }) => {
         logOut();
       },
     });
-    // if (window.confirm('Are you sure you want to log out?')) {
-    //   dispatch(logout());
-    //   window.localStorage.removeItem('token');
-    // }
   };
 
   const logOut = () => {
@@ -50,7 +47,10 @@ const Header = ({ title, buttonTitle, to }) => {
           {isAuth ? (
             <div className={styles.userActions}>
               <div className={styles.avatarBox}>
-                <img src={user.avatarUrl} alt={user.username} />
+                <img
+                  src={user.avatarUrl ? user.avatarUrl : '/noavatar.png'}
+                  alt={user.username}
+                />
               </div>
               <Link to={to}>
                 <Button className={styles.button}>{buttonTitle}</Button>

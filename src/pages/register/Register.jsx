@@ -48,13 +48,11 @@ export const Register = () => {
   };
 
   const onSubmit = async (values) => {
-    const file = values.avatar[0];
-    const avatarToBase64 = await convertToBase64(file);
     const data = await dispatch(registerUser({
       username: values.username,
       email: values.email,
       password: values.password,
-      avatarUrl: avatarToBase64,
+      avatarUrl: avatarPreview,
     }));
 
     if (!data.payload) {

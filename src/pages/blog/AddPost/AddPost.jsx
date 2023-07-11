@@ -80,7 +80,7 @@ export const AddPost = () => {
   const options = useMemo(
     () => ({
       spellChecker: false,
-      maxHeight: '400px',
+      maxHeight: '40vh',
       autofocus: true,
       placeholder: 'Content of Your Post',
       status: false,
@@ -101,8 +101,8 @@ export const AddPost = () => {
       <Paper style={{ padding: 30 }}>
         <Button
           onClick={() => inputFileRef.current.click()}
-          variant="outlined"
           size="large"
+          className={styles.download}
           style={{ marginBottom: '0.5rem' }}
         >
           Download Picture
@@ -122,15 +122,14 @@ export const AddPost = () => {
             <img
               className={styles.image}
               src={image}
-              // src={`${import.meta.env.VITE_APP_API_URL}${imageUrl}`}
-              alt="Uploaded"
+              alt="Uploaded Image"
             />
           </>
         )}
         <br />
         <br />
         <TextField
-          classes={{ root: styles.title }}
+          className={ styles.title }
           variant="standard"
           placeholder="Post title..."
           value={title}
@@ -144,11 +143,11 @@ export const AddPost = () => {
           options={options}
         />
         <div className={styles.buttons}>
-          <Button onClick={onSubmit} size="large" variant="contained">
+          <Button onClick={onSubmit} size="large"  className={styles.submit}>
             {isEditing ? 'Save' : 'Publish'}
           </Button>
           <a href="/">
-            <Button size="large">Cancel</Button>
+            <Button size="large" className={styles.cancel}>Cancel</Button>
           </a>
         </div>
       </Paper>

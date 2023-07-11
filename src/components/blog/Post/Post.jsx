@@ -79,11 +79,11 @@ export const Post = ({
         {isEditable && (
           <div className={styles.editButtons}>
             <Link to={`/edit-post/${id}`}>
-              <IconButton color="primary">
+              <IconButton className={styles.edit}>
                 <EditIcon />
               </IconButton>
             </Link>
-            <IconButton onClick={handleRemove} color="secondary">
+            <IconButton onClick={handleRemove} className={styles.delete}>
               <DeleteIcon />
             </IconButton>
           </div>

@@ -1,3 +1,5 @@
+
+
 .title {
   input {
     font-size: 2rem;
@@ -10,7 +12,6 @@
   width: 80%;
   margin: 1rem auto;
 }
-
 
 .editor {
   margin: 2rem -2rem;
@@ -31,8 +32,32 @@
 
 .buttons {
   display: flex;
-
   button {
     margin-right: 1rem;
+    transition: all 0.3s ease-in;
+  }
+  .cancel {
+    color: var(--red);
+    border: 1px solid var(--red);
+    &:hover {
+      color: #fff;
+      background-color: var(--red);
+    }
+  }
+  .submit {
+    color: var(--golden);
+    border: 1px solid var(--golden);
+    &:hover {
+      color: #fff;
+      background-color: var(--golden);
+    }
+  }
+}
+button.download {
+  color: var(--golden);
+  border: 1px solid var(--golden);
+  &:hover {
+    color: #fff;
+    background-color: var(--golden);
   }
 }

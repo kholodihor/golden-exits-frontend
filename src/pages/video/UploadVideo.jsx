@@ -74,7 +74,7 @@ export const UploadVideo = () => {
     <div className={styles.UploadVideo}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.left}>
-          <h1>Upload your Video with max size 9mb</h1>
+          <h1>Upload your Video</h1>
           <Dropzone onDrop={onDrop} multiple={false} maxSize={8000000000}>
             {({ getRootProps, getInputProps }) => (
               <section>
@@ -88,7 +88,7 @@ export const UploadVideo = () => {
                       style={{ fontSize: '2rem', cursor: 'pointer' }}
                     />
                   )}
-                  {videoName && <p>{videoName}</p>}
+                  {videoName && !uploading && <p>{videoName}</p>}
                 </div>
               </section>
             )}
