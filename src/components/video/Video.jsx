@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import axios from '@/utils/axios';
-import { UserInfo } from '@/components/common/UserInfo/UserInfo';
-import { FavoriteBorderOutlined, FavoriteOutlined } from '@mui/icons-material';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { Paper } from '@mui/material';
-import styles from './Video.module.scss';
+import { useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import axios from "@/utils/axios";
+import { UserInfo } from "@/components/common/UserInfo/UserInfo";
+import { FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import { Paper } from "@mui/material";
+import styles from "./Video.module.scss";
 
 export const Video = ({
   id,
@@ -31,11 +31,13 @@ export const Video = ({
           views: viewsCount,
         });
       } catch (err) {
-        console.warn(err);
+        console.log(err);
         alert(err.message);
       }
     }
   };
+
+  console.log(viewsCount);
 
   const handleLike = async () => {
     setIsLiked((prev) => (prev = !prev));

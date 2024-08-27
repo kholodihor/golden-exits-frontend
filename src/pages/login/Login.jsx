@@ -1,27 +1,27 @@
-import * as yup from 'yup';
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Navigate } from 'react-router-dom';
-import { loginUser, selectIsAuth } from '../../redux/slices/auth';
-import { useForm } from 'react-hook-form';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import styles from './Login.module.scss';
+import * as yup from "yup";
+import { useIsAuth } from "@/hooks/useIsAuth";
+import { useDispatch } from "react-redux";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Navigate } from "react-router-dom";
+import { loginUser } from "@/redux/slices/auth";
+import { useForm } from "react-hook-form";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import styles from "./Login.module.scss";
 
 export const Login = () => {
-  const isAuth = useSelector(selectIsAuth);
+  const isAuth = useIsAuth();
   const dispatch = useDispatch();
 
   const schema = yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
+    email: yup.string().email("Invalid email").required("Email is required"),
     password: yup
       .string()
-      .required('Password is required')
-      .min(5, 'Password must be at least 5 characters'),
+      .required("Password is required")
+      .min(5, "Password must be at least 5 characters"),
   });
 
   const {
@@ -30,22 +30,22 @@ export const Login = () => {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: "onChange",
   });
 
   const onSubmit = async (values) => {
     const data = await dispatch(loginUser(values));
 
     if (!data.payload) {
-      return alert('Authorization Failed');
+      return alert("Authorization Failed");
     }
 
-    if ('token' in data.payload) {
-      window.localStorage.setItem('token', data.payload.token);
+    if ("token" in data.payload) {
+      window.localStorage.setItem("token", data.payload.token);
     }
   };
 
@@ -66,7 +66,7 @@ export const Login = () => {
             error={Boolean(errors.email?.message)}
             helperText={errors.email?.message}
             type="email"
-            {...register('email', { required: 'Enter Email' })}
+            {...register("email", { required: "Enter Email" })}
             fullWidth
           />
           <TextField
@@ -74,7 +74,7 @@ export const Login = () => {
             label="Password"
             error={Boolean(errors.password?.message)}
             helperText={errors.password?.message}
-            {...register('password', { required: 'Enter Password' })}
+            {...register("password", { required: "Enter Password" })}
             fullWidth
           />
           <Button
