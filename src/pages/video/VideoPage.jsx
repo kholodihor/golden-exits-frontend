@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVideos } from "@/redux/slices/videos";
 import { selectIsAuth } from "@/redux/slices/auth";
-import { Container } from "@mui/material";
+import { Container, Typography, Box } from "@mui/material";
 import { BlogAside } from "@/components/blog/BlogAside/BlogAside";
 import { PostSkeleton } from "@/components/blog/Post/PostSkeleton";
 import { Video } from "@/components/video/Video";
@@ -26,34 +26,57 @@ export const VideoPage = () => {
   if (videos.status === "error") return <Error />;
 
   return (
-    <>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
       <Intro />
-      <Container maxWidth="xl">
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: { xs: 2, md: 4 },
+          px: { xs: 1, sm: 2, md: 3 }
+        }}
+      >
         <Header
           title={"Video"}
           buttonTitle={"upload a video"}
           to={"/video/upload"}
         />
         {!isAuth && (
-          <p
-            style={{
-              textAlign: "center",
-              color: "#d0af51",
-              marginBottom: "1rem",
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{
+              mb: 2,
+              color: '#d0af51',
+              fontStyle: 'italic'
             }}
           >
-            Login to upload the video 😊
-          </p>
+            Login to upload a video 😊
+          </Typography>
         )}
-        <Grid container spacing={2}>
-          <Grid xs={12} md={7} item>
+        <Grid
+          container
+          spacing={{ xs: 2, md: 3 }}
+          sx={{
+            flexDirection: { xs: 'column-reverse', md: 'row' }
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            md={8}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: { xs: 2, md: 3 }
+            }}
+          >
             {(isVideosLoading ? [...Array(3)] : videos.items).map(
               (video, index) =>
                 isVideosLoading ? (
                   <PostSkeleton key={index} />
                 ) : (
                   <Video
-                    key={index}
+                    key={video._id}
                     id={video._id}
                     title={video.title}
                     user={video.user}
@@ -67,11 +90,21 @@ export const VideoPage = () => {
                 )
             )}
           </Grid>
-          <Grid xs={12} md={5} item>
+          <Grid
+            item
+            xs={12}
+            md={4}
+            lg={3}
+            sx={{
+              position: { md: 'sticky' },
+              top: { md: '20px' },
+              alignSelf: { md: 'flex-start' }
+            }}
+          >
             <BlogAside />
           </Grid>
         </Grid>
       </Container>
-    </>
+    </Box>
   );
 };

@@ -1,29 +1,40 @@
-import React from 'react';
 import {
   Dialog,
   DialogActions,
   DialogContent,
   Typography,
+  Button,
 } from '@mui/material';
 import styles from './Confirm.module.scss';
 
-const Confirm = ({ confirmDialog, setConfirmDialog }) => {
+const Confirm = ({ isOpen = false, title = '', subtitle = '', onConfirm, onClose }) => {
   return (
-    <Dialog open={confirmDialog.isOpen} className={styles.Dialog}>
+    <Dialog
+      open={isOpen}
+      className={styles.Dialog}
+      onClose={onClose}
+    >
       <DialogContent className={styles.content}>
-        <Typography variant="h6">{confirmDialog.title}</Typography>
-        <Typography variant="subtitle2">{confirmDialog.subtitle}</Typography>
+        <Typography variant="h6">{title}</Typography>
+        <Typography variant="subtitle2">{subtitle}</Typography>
       </DialogContent>
       <DialogActions className={styles.actions}>
-        <button className={styles.yes} onClick={confirmDialog.onConfirm}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={styles.yes}
+          onClick={onConfirm}
+        >
           Yes
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
           className={styles.no}
-          onClick={() => setConfirmDialog({ isOpen: false })}
+          onClick={onClose}
         >
           No
-        </button>
+        </Button>
       </DialogActions>
     </Dialog>
   );

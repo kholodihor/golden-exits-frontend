@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "@/redux/slices/posts";
 import { selectIsAuth } from "@/redux/slices/auth";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, Typography, Box } from "@mui/material";
 import { Post } from "@/components/blog/Post/Post";
 import { BlogAside } from "@/components/blog/BlogAside/BlogAside";
 import { PostSkeleton } from "@/components/blog/Post/PostSkeleton";
@@ -25,23 +25,47 @@ export const Blog = () => {
   if (posts.status === "error") return <Error />;
 
   return (
-    <>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
       <Intro />
-      <Container maxWidth="xl">
-        <Header title={"Blog"} buttonTitle={"write a post"} to={"/add-post"} />
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: { xs: 2, md: 4 },
+          px: { xs: 1, sm: 2, md: 3 }
+        }}
+      >
+        <Header title="Blog" buttonTitle="Write a post" to="/add-post" />
         {!isAuth && (
-          <p
-            style={{
-              textAlign: "center",
-              color: "#d0af51",
-              marginBottom: "1rem",
+          <Typography
+            variant="body1"
+            align="center"
+            color="primary"
+            sx={{
+              mb: 2,
+              color: '#d0af51',
+              fontStyle: 'italic'
             }}
           >
             Login to write the post 😊
-          </p>
+          </Typography>
         )}
-        <Grid container spacing={2}>
-          <Grid xs={12} md={7} item>
+        <Grid
+          container
+          spacing={{ xs: 2, md: 3 }}
+          sx={{
+            flexDirection: { xs: 'column-reverse', md: 'row' }
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            md={8}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: { xs: 2, md: 3 }
+            }}
+          >
             {(isPostsLoading ? [...Array(3)] : posts.items).map((post, index) =>
               isPostsLoading ? (
                 <PostSkeleton key={index} />
@@ -51,21 +75,31 @@ export const Blog = () => {
                   id={post._id}
                   title={post.title}
                   text={post.text}
-                  likes={post.likes}
-                  comments={post.comments}
-                  imageUrl={post.imageUrl ? post.imageUrl : ""}
+                  imageUrl={post.imageUrl}
                   user={post.user}
                   createdAt={post.createdAt}
+                  likes={post.likes}
+                  comments={post.comments}
                   isEditable={userData?._id === post.user._id}
                 />
               )
             )}
           </Grid>
-          <Grid xs={12} md={5} item>
+          <Grid
+            item
+            xs={12}
+            md={4}
+            lg={3}
+            sx={{
+              position: { md: 'sticky' },
+              top: { md: 20 },
+              alignSelf: { md: 'flex-start' }
+            }}
+          >
             <BlogAside />
           </Grid>
         </Grid>
       </Container>
-    </>
+    </Box>
   );
 };

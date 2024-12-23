@@ -9,6 +9,7 @@ export const BlogAside = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [showedNews, setShowedNews] = useState([]);
+  
   const { news } = useSelector((state) => state.news);
   const { posts } = useSelector((state) => state.posts);
   const { videos } = useSelector((state) => state.videos);
@@ -20,17 +21,24 @@ export const BlogAside = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (!news.items) return;
+    
     if (location.pathname === '/blog') {
-      const sliced = news.slice(0, posts.items.length ? posts.items.length : 2);
+      const sliced = news.items.slice(0, posts?.items?.length || 2);
       setShowedNews(sliced);
     } else if (location.pathname === '/video') {
-      const sliced = news.slice(
-        0,
-        videos.items.length ? videos.items.length : 2
-      );
+      const sliced = news.items.slice(0, videos?.items?.length || 2);
       setShowedNews(sliced);
     }
-  }, [location.pathname, posts.items.length, videos.items.length]);
+  }, [location.pathname, news.items, posts?.items?.length, videos?.items?.length]);
+
+  if (news.status === 'failed') {
+    return (
+      <aside className={styles.BlogAside}>
+        <p className={styles.error}>Failed to load news: {news.error}</p>
+      </aside>
+    );
+  }
 
   return (
     <aside className={styles.BlogAside}>
@@ -41,15 +49,21 @@ export const BlogAside = () => {
           <article className={styles.article} key={article._id}>
             <div className={styles.flex}>
               <div className={styles.image}>
-                <img src={article.imageUrl} alt={article.title} />
+                {article.imageUrl && (
+                  <img 
+                    src={article.imageUrl} 
+                    alt={article.title} 
+                    loading="lazy"
+                  />
+                )}
               </div>
               <h2 className={styles.post_title}>{article.title}</h2>
             </div>
             <p className={styles.post_text}>{article.content}</p>
-            <div className={styles.postfooter}>
-              <cite>by Cold</cite>
+            <div className={styles.postFooter}>
+              <cite>by {article.author || 'Anonymous'}</cite>
               <span className={styles.post_date}>
-                {new Date(Date.now()).toLocaleString()}
+                {new Date(article.createdAt).toLocaleDateString()}
               </span>
             </div>
           </article>
