@@ -26,19 +26,17 @@ const AboutGE = () => {
             <div className={styles.textbox_inner}>
               <h2>Golden Exits is your entrance to the world of gold.</h2>
               <p>
-                Welcome to Golden Exits, an exquisite boutique that encapsulates
-                the essence of elegance and luxury. Step into a world where
-                sophistication meets contemporary style, and allow us to guide
-                you through an unparalleled shopping experience.
-                <br /> <br /> At Golden Exits, we curate a meticulously crafted
-                collection of fashion and accessories, carefully sourced from
-                renowned designers and emerging talents alike. Our boutique
-                showcases an exquisite range of clothing, footwear, handbags,
-                and jewelry, each piece handpicked for its impeccable
-                craftsmanship and timeless appeal.
+                Welcome to Golden Exits, an exquisite boutique that encapsulates the essence of
+                elegance and luxury. Step into a world where sophistication meets contemporary
+                style, and allow us to guide you through an unparalleled shopping experience.
+                <br /> <br /> At Golden Exits, we curate a meticulously crafted collection of
+                fashion and accessories, carefully sourced from renowned designers and emerging
+                talents alike. Our boutique showcases an exquisite range of clothing, footwear,
+                handbags, and jewelry, each piece handpicked for its impeccable craftsmanship and
+                timeless appeal.
               </p>
               <span>
-                <br/>
+                <br />
                 <em>--IN GOLD WE TRUST--</em>
               </span>
             </div>

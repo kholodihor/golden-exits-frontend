@@ -5,7 +5,7 @@ const initialState = {
   quantity: 0,
   total: 0,
   error: null,
-  loading: false
+  loading: false,
 };
 
 const cartSlice = createSlice({
@@ -19,9 +19,7 @@ const cartSlice = createSlice({
           throw new Error('Invalid product data');
         }
 
-        const existingProduct = state.items.find(
-          (item) => item.product._id === product._id
-        );
+        const existingProduct = state.items.find(item => item.product._id === product._id);
 
         if (existingProduct) {
           existingProduct.quantity += quantity;
@@ -38,17 +36,13 @@ const cartSlice = createSlice({
     },
     removeProduct: (state, action) => {
       try {
-        const itemToRemove = state.items.find(
-          (item) => item.product._id === action.payload
-        );
+        const itemToRemove = state.items.find(item => item.product._id === action.payload);
 
         if (!itemToRemove) {
           throw new Error('Product not found in cart');
         }
 
-        state.items = state.items.filter(
-          (item) => item !== itemToRemove
-        );
+        state.items = state.items.filter(item => item !== itemToRemove);
         state.total -= itemToRemove.price * itemToRemove.quantity;
         state.quantity -= itemToRemove.quantity;
         state.error = null;
@@ -56,7 +50,7 @@ const cartSlice = createSlice({
         state.error = error.message;
       }
     },
-    clearCart: (state) => {
+    clearCart: state => {
       state.items = [];
       state.quantity = 0;
       state.total = 0;
@@ -65,9 +59,9 @@ const cartSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
-    }
+    },
   },
 });
 
@@ -75,7 +69,7 @@ export const { addProduct, removeProduct, clearCart, setError, clearError } = ca
 export const cartReducer = cartSlice.reducer;
 
 // Selectors
-export const selectCartItems = (state) => state.cart.items;
-export const selectCartTotal = (state) => state.cart.total;
-export const selectCartQuantity = (state) => state.cart.quantity;
-export const selectCartError = (state) => state.cart.error;
+export const selectCartItems = state => state.cart.items;
+export const selectCartTotal = state => state.cart.total;
+export const selectCartQuantity = state => state.cart.quantity;
+export const selectCartError = state => state.cart.error;

@@ -6,44 +6,32 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   return data;
 });
 
-export const fetchPost = createAsyncThunk(
-  'posts/fetchPost',
-  async (id) => {
-    const { data } = await axios.get(`/posts/${id}`);
-    return data;
-  }
-);
+export const fetchPost = createAsyncThunk('posts/fetchPost', async id => {
+  const { data } = await axios.get(`/posts/${id}`);
+  return data;
+});
 
-export const createPost = createAsyncThunk(
-  'posts/createPost',
-  async (postData) => {
-    const { data } = await axios.post('/posts', postData);
-    return data;
-  }
-);
+export const createPost = createAsyncThunk('posts/createPost', async postData => {
+  const { data } = await axios.post('/posts', postData);
+  return data;
+});
 
-export const updatePost = createAsyncThunk(
-  'posts/updatePost',
-  async ({ id, postData }) => {
-    const { data } = await axios.patch(`/posts/${id}`, postData);
-    return data;
-  }
-);
+export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, postData }) => {
+  const { data } = await axios.patch(`/posts/${id}`, postData);
+  return data;
+});
 
-export const removePost = createAsyncThunk(
-  'posts/removePost',
-  async (id) => {
-    await axios.delete(`/posts/${id}`);
-    return id;
-  }
-);
+export const removePost = createAsyncThunk('posts/removePost', async id => {
+  await axios.delete(`/posts/${id}`);
+  return id;
+});
 
 const initialState = {
   posts: {
     items: [],
     currentPost: null,
     status: 'idle',
-    error: null
+    error: null,
   },
 };
 
@@ -51,14 +39,14 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    clearCurrentPost: (state) => {
+    clearCurrentPost: state => {
       state.posts.currentPost = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       // Fetch all posts
-      .addCase(fetchPosts.pending, (state) => {
+      .addCase(fetchPosts.pending, state => {
         state.posts.status = 'loading';
         state.posts.error = null;
       })
@@ -80,9 +68,7 @@ const postsSlice = createSlice({
       })
       // Update post
       .addCase(updatePost.fulfilled, (state, action) => {
-        const index = state.posts.items.findIndex(
-          post => post._id === action.payload._id
-        );
+        const index = state.posts.items.findIndex(post => post._id === action.payload._id);
         if (index !== -1) {
           state.posts.items[index] = action.payload;
         }
@@ -92,9 +78,7 @@ const postsSlice = createSlice({
       })
       // Remove post
       .addCase(removePost.fulfilled, (state, action) => {
-        state.posts.items = state.posts.items.filter(
-          post => post._id !== action.payload
-        );
+        state.posts.items = state.posts.items.filter(post => post._id !== action.payload);
         if (state.posts.currentPost?._id === action.payload) {
           state.posts.currentPost = null;
         }

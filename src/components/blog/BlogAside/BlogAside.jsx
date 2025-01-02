@@ -9,10 +9,10 @@ export const BlogAside = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [showedNews, setShowedNews] = useState([]);
-  
-  const { news } = useSelector((state) => state.news);
-  const { posts } = useSelector((state) => state.posts);
-  const { videos } = useSelector((state) => state.videos);
+
+  const { news } = useSelector(state => state.news);
+  const { posts } = useSelector(state => state.posts);
+  const { videos } = useSelector(state => state.videos);
 
   const isNewsLoading = news.status === 'loading';
 
@@ -22,7 +22,7 @@ export const BlogAside = () => {
 
   useEffect(() => {
     if (!news.items) return;
-    
+
     if (location.pathname === '/blog') {
       const sliced = news.items.slice(0, posts?.items?.length || 2);
       setShowedNews(sliced);
@@ -50,11 +50,7 @@ export const BlogAside = () => {
             <div className={styles.flex}>
               <div className={styles.image}>
                 {article.imageUrl && (
-                  <img 
-                    src={article.imageUrl} 
-                    alt={article.title} 
-                    loading="lazy"
-                  />
+                  <img src={article.imageUrl} alt={article.title} loading="lazy" />
                 )}
               </div>
               <h2 className={styles.post_title}>{article.title}</h2>

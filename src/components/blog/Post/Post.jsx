@@ -30,7 +30,7 @@ export const Post = ({
   const dispatch = useDispatch();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [commentsCount, setCommentsCount] = useState(comments?.length);
-  const userId = useSelector((state) => state?.auth?.data?._id);
+  const userId = useSelector(state => state?.auth?.data?._id);
   const [isLiked, setIsLiked] = useState(Boolean(likes[userId]));
   const [likeCount, setLikeCount] = useState(Object.keys(likes).length || 0);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -43,8 +43,8 @@ export const Post = ({
   const handleLike = useCallback(async () => {
     try {
       await axios.patch(`posts/${id}/like`, { userId });
-      setIsLiked((prev) => !prev);
-      setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+      setIsLiked(prev => !prev);
+      setLikeCount(prev => (isLiked ? prev - 1 : prev + 1));
     } catch (error) {
       console.error('Error updating like:', error);
     }
@@ -59,18 +59,18 @@ export const Post = ({
         dispatch(removePost(id))
           .unwrap()
           .then(() => {
-            setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           })
-          .catch((error) => {
+          .catch(error => {
             console.error('Error removing post:', error);
-            setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           });
       },
     });
   }, [id, dispatch]);
 
   const toggleComments = useCallback(() => {
-    setCommentsOpen((prev) => !prev);
+    setCommentsOpen(prev => !prev);
   }, []);
 
   if (isLoading) {
@@ -96,18 +96,12 @@ export const Post = ({
                 <EditIcon />
               </IconButton>
             </Link>
-            <IconButton 
-              onClick={handleRemove} 
-              className={styles.delete}
-              aria-label="Delete post"
-            >
+            <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
               <DeleteIcon />
             </IconButton>
           </div>
         )}
-        {imageUrl && (
-          <img className={styles.image} src={imageUrl} alt={title} loading="lazy" />
-        )}
+        {imageUrl && <img className={styles.image} src={imageUrl} alt={title} loading="lazy" />}
         <div className={styles.wrapper}>
           <div className={styles.wrapperHeader}>
             <UserInfo {...user} createdAt={createdAt} />
@@ -138,8 +132,8 @@ export const Post = ({
         <Comments
           postId={id}
           comments={comments}
-          onCommentAdd={() => setCommentsCount((prev) => prev + 1)}
-          onCommentRemove={() => setCommentsCount((prev) => prev - 1)}
+          onCommentAdd={() => setCommentsCount(prev => prev + 1)}
+          onCommentRemove={() => setCommentsCount(prev => prev - 1)}
         />
       )}
       <Confirm

@@ -1,79 +1,76 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "@/utils/axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from '@/utils/axios';
 
-export const registerUser = createAsyncThunk(
-  "auth/registerUser",
-  async (params) => {
-    const { data } = await axios.post("/auth/register", params);
-    return data;
-  }
-);
-
-export const loginUser = createAsyncThunk("auth/loginUser", async (params) => {
-  const { data } = await axios.post("/auth/login", params);
+export const registerUser = createAsyncThunk('auth/registerUser', async params => {
+  const { data } = await axios.post('/auth/register', params);
   return data;
 });
 
-export const fetchUser = createAsyncThunk("auth/fetchUser", async () => {
-  const { data } = await axios.get("/auth/user");
+export const loginUser = createAsyncThunk('auth/loginUser', async params => {
+  const { data } = await axios.post('/auth/login', params);
+  return data;
+});
+
+export const fetchUser = createAsyncThunk('auth/fetchUser', async () => {
+  const { data } = await axios.get('/auth/user');
   return data;
 });
 
 const initialState = {
   data: null,
-  status: "loading",
+  status: 'loading',
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
+    logout: state => {
       state.data = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(registerUser.pending, (state) => {
-        state.status = "loading";
+      .addCase(registerUser.pending, state => {
+        state.status = 'loading';
         state.data = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.status = "loaded";
+        state.status = 'loaded';
         state.data = action.payload;
       })
-      .addCase(registerUser.rejected, (state) => {
-        state.status = "error";
+      .addCase(registerUser.rejected, state => {
+        state.status = 'error';
         state.data = null;
       })
-      .addCase(loginUser.pending, (state) => {
-        state.status = "loading";
+      .addCase(loginUser.pending, state => {
+        state.status = 'loading';
         state.data = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = "loaded";
+        state.status = 'loaded';
         state.data = action.payload;
       })
-      .addCase(loginUser.rejected, (state) => {
-        state.status = "error";
+      .addCase(loginUser.rejected, state => {
+        state.status = 'error';
         state.data = null;
       })
-      .addCase(fetchUser.pending, (state) => {
-        state.status = "loading";
+      .addCase(fetchUser.pending, state => {
+        state.status = 'loading';
         state.data = null;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
-        state.status = "loaded";
+        state.status = 'loaded';
         state.data = action.payload;
       })
-      .addCase(fetchUser.rejected, (state) => {
-        state.status = "error";
+      .addCase(fetchUser.rejected, state => {
+        state.status = 'error';
         state.data = null;
       });
   },
 });
 
-export const selectIsAuth = (state) => Boolean(state.auth.data);
+export const selectIsAuth = state => Boolean(state.auth.data);
 
 export const authReducer = authSlice.reducer;
 

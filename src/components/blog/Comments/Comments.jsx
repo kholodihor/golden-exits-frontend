@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createComment, getPostComments } from '@/redux/slices/comment';
 import { useForm } from 'react-hook-form';
 import { PostSkeleton } from '../Post/PostSkeleton';
-import {UserInfo} from '@/components/common/UserInfo/UserInfo';
+import { UserInfo } from '@/components/common/UserInfo/UserInfo';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import styles from './Comments.module.scss';
 
 export const Comments = ({ postId, userId, setCommentsCount }) => {
   const dispatch = useDispatch();
-  const { comments } = useSelector((state) => state.comment);
+  const { comments } = useSelector(state => state.comment);
   const {
     register,
     handleSubmit,
@@ -28,7 +28,7 @@ export const Comments = ({ postId, userId, setCommentsCount }) => {
     try {
       const comment = values.comment;
       dispatch(createComment({ postId, comment, userId }));
-      setCommentsCount((prev) => prev + 1);
+      setCommentsCount(prev => prev + 1);
       e.target[0].value = '';
     } catch (error) {
       console.log(error);
@@ -69,4 +69,3 @@ export const Comments = ({ postId, userId, setCommentsCount }) => {
     </div>
   );
 };
-

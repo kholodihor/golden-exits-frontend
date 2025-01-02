@@ -5,29 +5,26 @@ const initialState = {
   news: {
     items: [],
     status: 'idle',
-    error: null
-  }
+    error: null,
+  },
 };
 
-export const getNews = createAsyncThunk(
-  'news/getNews',
-  async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.get('/news');
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch news');
-    }
+export const getNews = createAsyncThunk('news/getNews', async (_, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.get('/news');
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || 'Failed to fetch news');
   }
-);
+});
 
 const newsSlice = createSlice({
   name: 'news',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(getNews.pending, (state) => {
+      .addCase(getNews.pending, state => {
         state.news.status = 'loading';
         state.news.error = null;
       })

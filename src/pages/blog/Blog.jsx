@@ -1,28 +1,28 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts } from "@/redux/slices/posts";
-import { selectIsAuth } from "@/redux/slices/auth";
-import { Container, Grid, Typography, Box } from "@mui/material";
-import { Post } from "@/components/blog/Post/Post";
-import { BlogAside } from "@/components/blog/BlogAside/BlogAside";
-import { PostSkeleton } from "@/components/blog/Post/PostSkeleton";
-import Header from "@/components/common/Header/Header";
-import Intro from "@/components/common/Intro/Intro";
-import Error from "@/components/common/Error/Error";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPosts } from '@/redux/slices/posts';
+import { selectIsAuth } from '@/redux/slices/auth';
+import { Container, Grid, Typography, Box } from '@mui/material';
+import { Post } from '@/components/blog/Post/Post';
+import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
+import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
+import Header from '@/components/common/Header/Header';
+import Intro from '@/components/common/Intro/Intro';
+import Error from '@/components/common/Error/Error';
 
 export const Blog = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
-  const userData = useSelector((state) => state?.auth?.data);
-  const { posts } = useSelector((state) => state.posts);
+  const userData = useSelector(state => state?.auth?.data);
+  const { posts } = useSelector(state => state.posts);
 
-  const isPostsLoading = posts.status === "loading";
+  const isPostsLoading = posts.status === 'loading';
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  if (posts.status === "error") return <Error />;
+  if (posts.status === 'error') return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -31,7 +31,7 @@ export const Blog = () => {
         maxWidth="xl"
         sx={{
           py: { xs: 2, md: 4 },
-          px: { xs: 1, sm: 2, md: 3 }
+          px: { xs: 1, sm: 2, md: 3 },
         }}
       >
         <Header title="Blog" buttonTitle="Write a post" to="/add-post" />
@@ -43,7 +43,7 @@ export const Blog = () => {
             sx={{
               mb: 2,
               color: '#d0af51',
-              fontStyle: 'italic'
+              fontStyle: 'italic',
             }}
           >
             Login to write the post 😊
@@ -53,7 +53,7 @@ export const Blog = () => {
           container
           spacing={{ xs: 2, md: 3 }}
           sx={{
-            flexDirection: { xs: 'column-reverse', md: 'row' }
+            flexDirection: { xs: 'column-reverse', md: 'row' },
           }}
         >
           <Grid
@@ -63,7 +63,7 @@ export const Blog = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: { xs: 2, md: 3 }
+              gap: { xs: 2, md: 3 },
             }}
           >
             {(isPostsLoading ? [...Array(3)] : posts.items).map((post, index) =>
@@ -93,7 +93,7 @@ export const Blog = () => {
             sx={{
               position: { md: 'sticky' },
               top: { md: 20 },
-              alignSelf: { md: 'flex-start' }
+              alignSelf: { md: 'flex-start' },
             }}
           >
             <BlogAside />

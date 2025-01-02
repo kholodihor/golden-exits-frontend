@@ -5,7 +5,7 @@
   flex-direction: column;
   padding: 2rem;
   min-height: 90vh;
-  
+
   @media screen and (max-width: 768px) {
     padding: 1rem;
   }
@@ -15,7 +15,7 @@
     max-width: 1200px;
     display: flex;
     gap: 2rem;
-    
+
     @media screen and (max-width: 768px) {
       flex-direction: column;
       gap: 1rem;
@@ -27,7 +27,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      
+
       @media screen and (max-width: 768px) {
         max-height: 50vh;
       }
@@ -37,7 +37,7 @@
         height: 100%;
         max-height: 80vh;
         object-fit: contain;
-        
+
         @media screen and (max-width: 768px) {
           max-height: 50vh;
         }
@@ -51,7 +51,7 @@
       align-items: flex-start;
       flex-direction: column;
       padding: 2rem;
-      
+
       @media screen and (max-width: 768px) {
         padding: 1rem 0;
         align-items: center;
@@ -62,57 +62,57 @@
         text-transform: uppercase;
         font-weight: 300;
         margin-bottom: 1rem;
-        
+
         @media screen and (max-width: 768px) {
           font-size: 1.5rem;
         }
       }
-      
+
       .desc {
         color: var(--darkgray);
         margin-bottom: 1rem;
         line-height: 1.6;
       }
-      
+
       .price {
         font-size: 1.5rem;
         color: var(--golden);
         margin-bottom: 1rem;
       }
-      
+
       .quantity {
         padding: 1rem 0;
         display: flex;
         align-items: center;
         gap: 1rem;
-        
+
         @media screen and (max-width: 768px) {
           padding: 0.5rem 0;
         }
-        
+
         span {
           padding: 0.5rem 1rem;
           font-size: 1.2rem;
           color: var(--lightgray);
           cursor: pointer;
           user-select: none;
-          
+
           &:hover {
             color: var(--darkgray);
           }
-          
+
           &:nth-child(2) {
             cursor: default;
             min-width: 2rem;
             text-align: center;
-            
+
             &:hover {
               color: var(--lightgray);
             }
           }
         }
       }
-      
+
       .button {
         padding: 0.8rem 2.5rem;
         margin-top: 1rem;
@@ -125,7 +125,7 @@
         cursor: pointer;
         width: auto;
         min-width: 200px;
-        
+
         @media screen and (max-width: 768px) {
           width: 100%;
         }

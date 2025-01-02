@@ -1,26 +1,41 @@
-import { useState } from "react";
-import { useIsAuth } from "@/hooks/useIsAuth";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { logout } from "@/redux/slices/auth";
-import { Paper, Button, Avatar, Box, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
-import { LogoutOutlined, PersonOutlineOutlined, AddCircleOutlineOutlined } from "@mui/icons-material";
-import Confirm from "@/components/common/Confirm/Confirm";
-import styles from "./Header.module.scss";
+import { useState } from 'react';
+import { useIsAuth } from '@/hooks/useIsAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { logout } from '@/redux/slices/auth';
+import {
+  Paper,
+  Button,
+  Avatar,
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+} from '@mui/material';
+import {
+  LogoutOutlined,
+  PersonOutlineOutlined,
+  AddCircleOutlineOutlined,
+} from '@mui/icons-material';
+import Confirm from '@/components/common/Confirm/Confirm';
+import styles from './Header.module.scss';
 
 const Header = ({ title, buttonTitle, to }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.data);
+  const user = useSelector(state => state.auth.data);
   const [anchorEl, setAnchorEl] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
-    title: "",
-    subtitle: "",
+    title: '',
+    subtitle: '',
   });
 
   const isAuth = useIsAuth();
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -32,8 +47,8 @@ const Header = ({ title, buttonTitle, to }) => {
     handleMenuClose();
     setConfirmDialog({
       isOpen: true,
-      title: "Are you sure you want to log out?",
-      subtitle: "",
+      title: 'Are you sure you want to log out?',
+      subtitle: '',
       onConfirm: () => {
         logOut();
       },
@@ -42,7 +57,7 @@ const Header = ({ title, buttonTitle, to }) => {
 
   const logOut = () => {
     dispatch(logout());
-    window.localStorage.removeItem("token");
+    window.localStorage.removeItem('token');
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
@@ -66,8 +81,8 @@ const Header = ({ title, buttonTitle, to }) => {
                     border: '1px solid #d0af51',
                     '&:hover': {
                       border: '1px solid #e5c362',
-                      backgroundColor: 'rgba(0, 0, 0, 0.04)'
-                    }
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
                   }}
                 >
                   <Avatar
@@ -77,7 +92,7 @@ const Header = ({ title, buttonTitle, to }) => {
                       width: 40,
                       height: 40,
                       backgroundColor: 'rgba(208, 175, 81, 0.1)',
-                      color: '#d0af51'
+                      color: '#d0af51',
                     }}
                   >
                     {user?.username?.[0]?.toUpperCase() || <PersonOutlineOutlined />}
@@ -96,19 +111,14 @@ const Header = ({ title, buttonTitle, to }) => {
                     borderRadius: 2,
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(208, 175, 81, 0.3)'
-                  }
+                    border: '1px solid rgba(208, 175, 81, 0.3)',
+                  },
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
                 {buttonTitle && to && (
-                  <MenuItem
-                    component={Link}
-                    to={to}
-                    onClick={handleMenuClose}
-                    sx={{ py: 1.5 }}
-                  >
+                  <MenuItem component={Link} to={to} onClick={handleMenuClose} sx={{ py: 1.5 }}>
                     <ListItemIcon>
                       <AddCircleOutlineOutlined fontSize="small" sx={{ color: '#d0af51' }} />
                     </ListItemIcon>
@@ -134,8 +144,8 @@ const Header = ({ title, buttonTitle, to }) => {
                   color: '#d0af51',
                   '&:hover': {
                     borderColor: '#e5c362',
-                    backgroundColor: 'rgba(208, 175, 81, 0.04)'
-                  }
+                    backgroundColor: 'rgba(208, 175, 81, 0.04)',
+                  },
                 }}
               >
                 Login
@@ -147,8 +157,8 @@ const Header = ({ title, buttonTitle, to }) => {
                 sx={{
                   backgroundColor: '#d0af51',
                   '&:hover': {
-                    backgroundColor: '#e5c362'
-                  }
+                    backgroundColor: '#e5c362',
+                  },
                 }}
               >
                 Register

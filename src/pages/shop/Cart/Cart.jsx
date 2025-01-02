@@ -12,11 +12,11 @@ const KEY = import.meta.env.VITE_APP_STRIPE_PUBLIC_KEY;
 
 export const Cart = () => {
   const dispatch = useDispatch();
-  const total = useSelector((state) => state.cart.total);
-  const cart = useSelector((state) => state.cart.items);
+  const total = useSelector(state => state.cart.total);
+  const cart = useSelector(state => state.cart.items);
   const [stripeToken, setStripeToken] = useState(null);
 
-  const onToken = (token) => {
+  const onToken = token => {
     setStripeToken(token);
   };
 
@@ -35,7 +35,7 @@ export const Cart = () => {
     stripeToken && makeRequest();
   }, [stripeToken, total]);
 
-  const handleRemoveProduct = (id) => {
+  const handleRemoveProduct = id => {
     dispatch(removeProduct(id));
   };
 
@@ -52,7 +52,7 @@ export const Cart = () => {
       {cart.length ? (
         <div className={styles.inner}>
           <div className={styles.cartcontainer}>
-            {cart.map((item) => (
+            {cart.map(item => (
               <div className={styles.cartitem} key={item.product._id}>
                 <div className={styles.image}>
                   <img src={item.product.img} alt={item.product.title} />
@@ -67,9 +67,7 @@ export const Cart = () => {
                     <p>${item.price * item.quantity}</p>
                   </div>
                   <div className={styles.remove}>
-                    <FaRegTimesCircle
-                      onClick={() => handleRemoveProduct(item.product._id)}
-                    />
+                    <FaRegTimesCircle onClick={() => handleRemoveProduct(item.product._id)} />
                   </div>
                 </div>
               </div>
@@ -98,9 +96,8 @@ export const Cart = () => {
         </div>
       ) : null}
       <Link to="/shop">
-        <button  className={styles.continue}>continue shopping</button>
+        <button className={styles.continue}>continue shopping</button>
       </Link>
     </div>
   );
 };
-

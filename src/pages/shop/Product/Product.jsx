@@ -32,14 +32,14 @@ export const Product = () => {
 
   const decrease = () => {
     if (quantity !== 0) {
-      setQuantity((prev) => prev - 1);
+      setQuantity(prev => prev - 1);
     } else {
       setQuantity(0);
     }
   };
 
   const increase = () => {
-    setQuantity((prev) => prev + 1);
+    setQuantity(prev => prev + 1);
   };
 
   const addToCart = () => {
@@ -67,11 +67,7 @@ export const Product = () => {
             <span>{quantity}</span>
             <span onClick={increase}>+</span>
           </div>
-          <button
-            className={styles.button}
-            disabled={!quantity}
-            onClick={addToCart}
-          >
+          <button className={styles.button} disabled={!quantity} onClick={addToCart}>
             add to cart
           </button>
         </div>

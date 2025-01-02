@@ -10,11 +10,7 @@ export const Home = () => {
     <>
       <Intro />
       <Container maxWidth="xl">
-        <Header
-          title={'Arrivals'}
-          buttonTitle={'write a post'}
-          to={'/add-post'}
-        />
+        <Header title={'Arrivals'} buttonTitle={'write a post'} to={'/add-post'} />
         <NewArrivals />
         <AboutGE />
         <Tabs />

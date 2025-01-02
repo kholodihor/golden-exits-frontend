@@ -1,13 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
 
-export const fetchComments = createAsyncThunk(
-  'comments/fetchComments',
-  async (postId) => {
-    const { data } = await axios.get(`/posts/${postId}/comments`);
-    return data;
-  }
-);
+export const fetchComments = createAsyncThunk('comments/fetchComments', async postId => {
+  const { data } = await axios.get(`/posts/${postId}/comments`);
+  return data;
+});
 
 export const createComment = createAsyncThunk(
   'comments/createComment',
@@ -29,17 +26,17 @@ const initialState = {
   comments: {
     items: {},
     status: 'idle',
-    error: null
-  }
+    error: null,
+  },
 };
 
 const commentsSlice = createSlice({
   name: 'comments',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchComments.pending, (state) => {
+      .addCase(fetchComments.pending, state => {
         state.comments.status = 'loading';
       })
       .addCase(fetchComments.fulfilled, (state, action) => {
@@ -64,7 +61,7 @@ const commentsSlice = createSlice({
           );
         }
       });
-  }
+  },
 });
 
 export const commentsReducer = commentsSlice.reducer;

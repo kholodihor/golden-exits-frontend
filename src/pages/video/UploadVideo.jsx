@@ -12,7 +12,7 @@ import styles from './UploadVideo.module.scss';
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.auth.data);
+  const userData = useSelector(state => state.auth.data);
   const [video, setVideo] = useState('');
   const [videoName, setVideoName] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -35,7 +35,7 @@ export const UploadVideo = () => {
     mode: 'onChange',
   });
 
-  const setFileToBase64 = (file) => {
+  const setFileToBase64 = file => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -43,13 +43,13 @@ export const UploadVideo = () => {
     };
   };
 
-  const onDrop = async (files) => {
+  const onDrop = async files => {
     const file = files[0];
     setVideoName(file.name);
     setFileToBase64(file);
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     setUploading(true);
     try {
       const { data } = await axios.post('/uploadvideo', { video });
@@ -60,7 +60,7 @@ export const UploadVideo = () => {
         url: data.url,
         likes: {},
       };
-      axios.post('/videos', fields).then((response) => {
+      axios.post('/videos', fields).then(response => {
         setUploading(false);
         alert(`Video '${response.data.title}' Uploaded Successfully`);
         navigate('/video');
@@ -80,13 +80,9 @@ export const UploadVideo = () => {
               <section>
                 <div className={styles.dropzone} {...getRootProps()}>
                   <input {...getInputProps()} />
-                  {uploading && (
-                    <p>Wait a little while we are uploading your video...</p>
-                  )}
+                  {uploading && <p>Wait a little while we are uploading your video...</p>}
                   {!videoName && !uploading && (
-                    <AiOutlinePlus
-                      style={{ fontSize: '2rem', cursor: 'pointer' }}
-                    />
+                    <AiOutlinePlus style={{ fontSize: '2rem', cursor: 'pointer' }} />
                   )}
                   {videoName && !uploading && <p>{videoName}</p>}
                 </div>

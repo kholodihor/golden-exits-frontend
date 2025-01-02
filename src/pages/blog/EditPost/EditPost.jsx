@@ -22,12 +22,12 @@ export const EditPost = () => {
 
   const isEditing = Boolean(id);
 
-  const handleImage = (event) => {
+  const handleImage = event => {
     const file = event.target.files[0];
     setFileToBase64(file);
   };
 
-  const setFileToBase64 = (file) => {
+  const setFileToBase64 = file => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -39,7 +39,7 @@ export const EditPost = () => {
     setImage('');
   };
 
-  const addText = useCallback((value) => {
+  const addText = useCallback(value => {
     setText(value);
   }, []);
 
@@ -52,7 +52,7 @@ export const EditPost = () => {
           setText(data.text);
           setImage(data.imageUrl);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
           alert(err.message);
         });
@@ -117,11 +117,7 @@ export const EditPost = () => {
             >
               Delete
             </Button>
-            <img
-              className={styles.image}
-              src={image}
-              alt="Uploaded"
-            />
+            <img className={styles.image} src={image} alt="Uploaded" />
           </>
         )}
         <br />
@@ -131,15 +127,10 @@ export const EditPost = () => {
           variant="standard"
           placeholder="Post title..."
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           fullWidth
         />
-        <SimpleMDE
-          className={styles.editor}
-          value={text}
-          onChange={addText}
-          options={options}
-        />
+        <SimpleMDE className={styles.editor} value={text} onChange={addText} options={options} />
         <div className={styles.buttons}>
           <Button onClick={onSubmit} size="large" variant="contained">
             {isEditing ? 'Save' : 'Publish'}

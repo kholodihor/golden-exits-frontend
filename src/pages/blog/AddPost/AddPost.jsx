@@ -22,12 +22,12 @@ export const AddPost = () => {
 
   const isEditing = Boolean(id);
 
-  const handleImage = (event) => {
+  const handleImage = event => {
     const file = event.target.files[0];
     setFileToBase64(file);
   };
 
-  const setFileToBase64 = (file) => {
+  const setFileToBase64 = file => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -39,7 +39,7 @@ export const AddPost = () => {
     setImage('');
   };
 
-  const addText = useCallback((value) => {
+  const addText = useCallback(value => {
     setText(value);
   }, []);
 
@@ -51,9 +51,7 @@ export const AddPost = () => {
         text,
         imageUrl: data.url,
       };
-      isEditing
-        ? await axios.patch(`/posts/${id}`, values)
-        : await axios.post('/posts', values);
+      isEditing ? await axios.patch(`/posts/${id}`, values) : await axios.post('/posts', values);
       navigate(`/blog`);
     } catch (err) {
       console.error(err);
@@ -70,7 +68,7 @@ export const AddPost = () => {
           setText(data.text);
           setImage(data.imageUrl);
         })
-        .catch((err) => {
+        .catch(err => {
           console.warn(err);
           alert(err.message);
         });
@@ -119,35 +117,28 @@ export const AddPost = () => {
             >
               Delete
             </Button>
-            <img
-              className={styles.image}
-              src={image}
-              alt="Uploaded Image"
-            />
+            <img className={styles.image} src={image} alt="Uploaded Image" />
           </>
         )}
         <br />
         <br />
         <TextField
-          className={ styles.title }
+          className={styles.title}
           variant="standard"
           placeholder="Post title..."
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           fullWidth
         />
-        <SimpleMDE
-          className={styles.editor}
-          value={text}
-          onChange={addText}
-          options={options}
-        />
+        <SimpleMDE className={styles.editor} value={text} onChange={addText} options={options} />
         <div className={styles.buttons}>
-          <Button onClick={onSubmit} size="large"  className={styles.submit}>
+          <Button onClick={onSubmit} size="large" className={styles.submit}>
             {isEditing ? 'Save' : 'Publish'}
           </Button>
           <a href="/">
-            <Button size="large" className={styles.cancel}>Cancel</Button>
+            <Button size="large" className={styles.cancel}>
+              Cancel
+            </Button>
           </a>
         </div>
       </Paper>

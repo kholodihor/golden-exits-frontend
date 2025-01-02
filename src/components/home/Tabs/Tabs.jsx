@@ -8,7 +8,7 @@ const tabs = ['shoes', 'shirts', 'jeans', 'accesoires'];
 const Tabs = () => {
   const [tabIndex, setTabIndex] = useState(0);
 
-  const handleIndex = (index) => {
+  const handleIndex = index => {
     setTabIndex(index);
   };
 

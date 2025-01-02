@@ -1,15 +1,15 @@
-import { useState, useRef, useCallback } from "react";
-import { useSelector } from "react-redux";
-import axios from "@/utils/axios";
-import { UserInfo } from "@/components/common/UserInfo/UserInfo";
+import { useState, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import axios from '@/utils/axios';
+import { UserInfo } from '@/components/common/UserInfo/UserInfo';
 import {
   FavoriteBorderOutlined,
   FavoriteOutlined,
   VisibilityOutlined,
   PlayArrowRounded,
   EditOutlined,
-  DeleteOutlined
-} from "@mui/icons-material";
+  DeleteOutlined,
+} from '@mui/icons-material';
 import {
   Paper,
   Typography,
@@ -21,10 +21,10 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  ListItemText
-} from "@mui/material";
+  ListItemText,
+} from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
-import styles from "./Video.module.scss";
+import styles from './Video.module.scss';
 
 export const Video = ({
   id,
@@ -37,19 +37,19 @@ export const Video = ({
   likes,
   isEditable,
   onRemove,
-  onEdit
+  onEdit,
 }) => {
   const videoRef = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
-  const userId = useSelector((state) => state?.auth?.data?._id);
+  const userId = useSelector(state => state?.auth?.data?._id);
   const [viewsCount, setViewsCount] = useState(views);
   const [isLiked, setIsLiked] = useState(Boolean(likes[userId]));
   const [likeCount, setLikeCount] = useState(Object.keys(likes).length);
 
   const handleViewsCount = useCallback(async () => {
     if (videoRef.current?.currentTime <= 1) {
-      setViewsCount((prev) => prev + 1);
+      setViewsCount(prev => prev + 1);
       try {
         await axios.patch(`/videos/${id}`, {
           views: viewsCount,
@@ -63,14 +63,14 @@ export const Video = ({
   const handleLike = useCallback(async () => {
     try {
       await axios.patch(`videos/${id}/like`, { userId });
-      setIsLiked((prev) => !prev);
-      setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+      setIsLiked(prev => !prev);
+      setLikeCount(prev => prev + (isLiked ? -1 : 1));
     } catch (error) {
       console.warn('Failed to update like:', error);
     }
   }, [id, userId, isLiked]);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -98,8 +98,8 @@ export const Video = ({
         transition: 'all 0.3s ease-in-out',
         '&:hover': {
           transform: 'translateY(-4px)',
-          boxShadow: (theme) => theme.shadows[8]
-        }
+          boxShadow: theme => theme.shadows[8],
+        },
       }}
     >
       {videoUrl && (
@@ -108,7 +108,7 @@ export const Video = ({
             position: 'relative',
             paddingTop: '56.25%',
             backgroundColor: '#000',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -128,7 +128,7 @@ export const Video = ({
               left: 0,
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
           />
           <Fade in={!isHovered}>
@@ -143,7 +143,7 @@ export const Video = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'rgba(0, 0, 0, 0.3)',
-                transition: 'opacity 0.3s ease'
+                transition: 'opacity 0.3s ease',
               }}
             >
               <IconButton
@@ -151,8 +151,8 @@ export const Video = ({
                   backgroundColor: 'rgba(255, 255, 255, 0.3)',
                   '&:hover': {
                     backgroundColor: '#fff',
-                    transform: 'scale(1.1)'
-                  }
+                    transform: 'scale(1.1)',
+                  },
                 }}
               >
                 <PlayArrowRounded fontSize="large" />
@@ -165,7 +165,7 @@ export const Video = ({
                 position: 'absolute',
                 top: 8,
                 right: 8,
-                zIndex: 1
+                zIndex: 1,
               }}
             >
               <IconButton
@@ -176,9 +176,9 @@ export const Video = ({
                   '&:hover': {
                     backgroundColor: 'rgba(0, 0, 0, 0.9)',
                     transform: 'scale(1.05)',
-                    border: '1px solid #e5c362'
+                    border: '1px solid #e5c362',
                   },
-                  transition: 'all 0.2s ease-in-out'
+                  transition: 'all 0.2s ease-in-out',
                 }}
                 onClick={handleMenuOpen}
               >
@@ -197,23 +197,29 @@ export const Video = ({
                     borderRadius: 2,
                     backgroundColor: 'rgba(0, 0, 0, 0.95)',
                     backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(208, 175, 81, 0.3)'
-                  }
+                    border: '1px solid rgba(208, 175, 81, 0.3)',
+                  },
                 }}
               >
-                <MenuItem onClick={handleEdit} sx={{
-                  py: 1,
-                  '&:hover': { backgroundColor: 'rgba(208, 175, 81, 0.1)' }
-                }}>
+                <MenuItem
+                  onClick={handleEdit}
+                  sx={{
+                    py: 1,
+                    '&:hover': { backgroundColor: 'rgba(208, 175, 81, 0.1)' },
+                  }}
+                >
                   <ListItemIcon>
                     <EditOutlined fontSize="small" sx={{ color: '#d0af51' }} />
                   </ListItemIcon>
                   <ListItemText primary="Edit" sx={{ color: '#d0af51' }} />
                 </MenuItem>
-                <MenuItem onClick={handleDelete} sx={{
-                  py: 1,
-                  '&:hover': { backgroundColor: 'rgba(255, 59, 48, 0.1)' }
-                }}>
+                <MenuItem
+                  onClick={handleDelete}
+                  sx={{
+                    py: 1,
+                    '&:hover': { backgroundColor: 'rgba(255, 59, 48, 0.1)' },
+                  }}
+                >
                   <ListItemIcon>
                     <DeleteOutlined fontSize="small" sx={{ color: '#ff3b30' }} />
                   </ListItemIcon>
@@ -226,7 +232,10 @@ export const Video = ({
       )}
       <Box sx={{ p: 2 }}>
         <Box sx={{ mb: 2 }}>
-          <UserInfo {...user} additionalText={formatDistanceToNow(new Date(createdAt), { addSuffix: true })} />
+          <UserInfo
+            {...user}
+            additionalText={formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+          />
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography
@@ -241,7 +250,7 @@ export const Video = ({
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              lineHeight: 1.2
+              lineHeight: 1.2,
             }}
           >
             {title}
@@ -252,7 +261,7 @@ export const Video = ({
             sx={{
               backgroundColor: 'rgba(208, 175, 81, 0.1)',
               color: '#d0af51',
-              fontWeight: 500
+              fontWeight: 500,
             }}
           />
         </Box>
@@ -260,17 +269,17 @@ export const Video = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 2
+            gap: 2,
           }}
         >
-          <Tooltip title={isLiked ? "Unlike" : "Like"} arrow>
+          <Tooltip title={isLiked ? 'Unlike' : 'Like'} arrow>
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
                 color: isLiked ? '#d0af51' : 'text.secondary',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
               onClick={handleLike}
             >
@@ -285,9 +294,9 @@ export const Video = ({
                     backgroundColor: 'rgba(0, 0, 0, 0.9)',
                     transform: 'scale(1.05)',
                     border: '1px solid #e5c362',
-                    color: '#e5c362'
+                    color: '#e5c362',
                   },
-                  transition: 'all 0.2s ease-in-out'
+                  transition: 'all 0.2s ease-in-out',
                 }}
               >
                 {isLiked ? <FavoriteOutlined /> : <FavoriteBorderOutlined />}
@@ -303,7 +312,7 @@ export const Video = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                color: 'text.secondary'
+                color: 'text.secondary',
               }}
             >
               <IconButton
@@ -317,9 +326,9 @@ export const Video = ({
                     backgroundColor: 'rgba(0, 0, 0, 0.9)',
                     transform: 'scale(1.05)',
                     border: '1px solid #e5c362',
-                    color: '#e5c362'
+                    color: '#e5c362',
                   },
-                  transition: 'all 0.2s ease-in-out'
+                  transition: 'all 0.2s ease-in-out',
                 }}
               >
                 <VisibilityOutlined />
