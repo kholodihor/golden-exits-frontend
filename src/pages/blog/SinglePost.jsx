@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '@/utils/logger';
 import axios from '@/utils/axios';
 import { Link, useParams } from 'react-router-dom';
 import { Post } from '@/components/blog/Post/Post';
@@ -19,7 +20,7 @@ export const SinglePost = () => {
         setLoading(false);
       })
       .catch(err => {
-        console.warn(err);
+        logger.warn(err);
         alert(err.message);
       });
   }, [id]);

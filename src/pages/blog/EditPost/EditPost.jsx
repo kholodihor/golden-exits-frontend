@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { logger } from '@/utils/logger';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { useSelector } from 'react-redux';
@@ -53,7 +54,7 @@ export const EditPost = () => {
           setImage(data.imageUrl);
         })
         .catch(err => {
-          console.error(err);
+          logger.error(err);
           alert(err.message);
         });
     }
@@ -70,7 +71,7 @@ export const EditPost = () => {
       await axios.patch(`/posts/${id}`, values);
       navigate(`/blog`);
     } catch (err) {
-      console.warn(err);
+      logger.warn(err);
       alert(err.message);
     }
   };

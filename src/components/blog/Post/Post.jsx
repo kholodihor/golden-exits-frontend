@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from '@/utils/axios';
@@ -46,7 +47,7 @@ export const Post = ({
       setIsLiked(prev => !prev);
       setLikeCount(prev => (isLiked ? prev - 1 : prev + 1));
     } catch (error) {
-      console.error('Error updating like:', error);
+      logger.error('Error updating like:', error);
     }
   }, [id, userId, isLiked]);
 
@@ -62,7 +63,7 @@ export const Post = ({
             setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           })
           .catch(error => {
-            console.error('Error removing post:', error);
+            logger.error('Error removing post:', error);
             setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           });
       },

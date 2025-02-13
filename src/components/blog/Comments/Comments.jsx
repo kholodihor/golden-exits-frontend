@@ -31,7 +31,7 @@ export const Comments = ({ postId, userId, setCommentsCount }) => {
       setCommentsCount(prev => prev + 1);
       e.target[0].value = '';
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   };
 

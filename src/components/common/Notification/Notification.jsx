@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
-import styles from './Notification.module.scss';
 
 const Notification = ({ notify, setNotify }) => {
   const handleClose = () => {

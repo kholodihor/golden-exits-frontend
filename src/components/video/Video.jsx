@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 import { useSelector } from 'react-redux';
 import axios from '@/utils/axios';
 import { UserInfo } from '@/components/common/UserInfo/UserInfo';
@@ -55,7 +56,7 @@ export const Video = ({
           views: viewsCount,
         });
       } catch (err) {
-        console.warn('Failed to update view count:', err);
+        logger.warn('Failed to update view count:', err);
       }
     }
   }, [id, viewsCount]);
@@ -66,7 +67,7 @@ export const Video = ({
       setIsLiked(prev => !prev);
       setLikeCount(prev => prev + (isLiked ? -1 : 1));
     } catch (error) {
-      console.warn('Failed to update like:', error);
+      logger.warn('Failed to update like:', error);
     }
   }, [id, userId, isLiked]);
 
