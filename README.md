@@ -22,7 +22,7 @@ A modern, responsive React application for the Golden Exits platform featuring b
 ### Prerequisites
 
 - Node.js (v14.x or higher)
-- npm or yarn
+- npm
 
 ### Installation
 
@@ -35,15 +35,11 @@ A modern, responsive React application for the Golden Exits platform featuring b
 2. Install dependencies:
    ```bash
    npm install
-   # or
-   yarn
    ```
 
 3. Start the development server:
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
 4. Open your browser and navigate to:
