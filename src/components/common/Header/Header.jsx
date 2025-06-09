@@ -73,32 +73,44 @@ const Header = ({ title, buttonTitle, to }) => {
         <Box className={styles.buttons}>
           {isAuth ? (
             <Box className={styles.userActions}>
-              <Tooltip title={user?.username || 'Profile'} arrow>
-                <IconButton
-                  onClick={handleMenuOpen}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
                   sx={{
-                    padding: 0.5,
-                    border: '1px solid #d0af51',
-                    '&:hover': {
-                      border: '1px solid #e5c362',
-                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                    },
+                    typography: 'body1',
+                    color: '#d0af51',
+                    fontWeight: 500,
+                    display: { xs: 'none', sm: 'block' },
                   }}
                 >
-                  <Avatar
-                    src={user?.avatarUrl}
-                    alt={user?.username}
+                  {user?.username || 'User'}
+                </Box>
+                <Tooltip title={user?.username || 'Profile'} arrow>
+                  <IconButton
+                    onClick={handleMenuOpen}
                     sx={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: 'rgba(208, 175, 81, 0.1)',
-                      color: '#d0af51',
+                      padding: 0.5,
+                      border: '1px solid #d0af51',
+                      '&:hover': {
+                        border: '1px solid #e5c362',
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                      },
                     }}
                   >
-                    {user?.username?.[0]?.toUpperCase() || <PersonOutlineOutlined />}
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
+                    <Avatar
+                      src={user?.avatarUrl}
+                      alt={user?.username}
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        backgroundColor: 'rgba(208, 175, 81, 0.1)',
+                        color: '#d0af51',
+                      }}
+                    >
+                      {user?.username?.[0]?.toUpperCase() || <PersonOutlineOutlined />}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+              </Box>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}

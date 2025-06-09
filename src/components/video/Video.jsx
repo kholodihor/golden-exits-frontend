@@ -96,11 +96,6 @@ export const Video = ({
       sx={{
         borderRadius: 2,
         overflow: 'hidden',
-        transition: 'all 0.3s ease-in-out',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: theme => theme.shadows[8],
-        },
       }}
     >
       {videoUrl && (
@@ -144,16 +139,11 @@ export const Video = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'rgba(0, 0, 0, 0.3)',
-                transition: 'opacity 0.3s ease',
               }}
             >
               <IconButton
                 sx={{
                   backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                  '&:hover': {
-                    backgroundColor: '#fff',
-                    transform: 'scale(1.1)',
-                  },
                 }}
               >
                 <PlayArrowRounded fontSize="large" />

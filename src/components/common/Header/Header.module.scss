@@ -5,6 +5,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 2rem;
+  background: rgb(244, 235, 208, 0.3);
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
@@ -54,16 +55,19 @@
       color: var(--golden);
       text-transform: uppercase;
       border: 1px solid var(--golden);
+
       &:hover {
         background: var(--golden);
         color: #fff;
         border: 1px solid transparent;
       }
+
       @media screen and (max-width: 450px) {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
       }
     }
+
     .logout {
       padding: 0.5rem 1.3rem;
       outline: none;
@@ -72,6 +76,7 @@
       color: var(--red);
       text-transform: uppercase;
       border: 1px solid var(--red);
+
       &:hover {
         background: var(--red);
         color: #fff;
@@ -95,12 +100,14 @@
       justify-content: space-around;
       align-items: center;
       flex-direction: column;
+
       img {
         width: 3rem;
         height: 3rem;
         border-radius: 100%;
         object-fit: cover;
       }
+
       span {
         font-size: 0.7rem;
       }

@@ -38,7 +38,7 @@ export const Post = ({
     isOpen: false,
     title: '',
     subtitle: '',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const handleLike = useCallback(async () => {
@@ -115,7 +115,11 @@ export const Post = ({
               </div>
               <div className={styles.likes}>
                 <IconButton onClick={handleLike} aria-label="Like post">
-                  {isLiked ? <FavoriteOutlined /> : <FavoriteBorderOutlined />}
+                  {isLiked ? (
+                    <FavoriteOutlined style={{ color: 'var(--red)' }} />
+                  ) : (
+                    <FavoriteBorderOutlined style={{ color: 'var(--red)' }} />
+                  )}
                 </IconButton>
                 <span>{likeCount}</span>
               </div>
@@ -132,7 +136,6 @@ export const Post = ({
       {commentsOpen && (
         <Comments
           postId={id}
-          comments={comments}
           onCommentAdd={() => setCommentsCount(prev => prev + 1)}
           onCommentRemove={() => setCommentsCount(prev => prev - 1)}
         />

@@ -47,20 +47,26 @@ export const BlogAside = () => {
           <PostSkeleton key={index} />
         ) : (
           <article className={styles.article} key={article._id}>
-            <div className={styles.flex}>
-              <div className={styles.image}>
-                {article.imageUrl && (
-                  <img src={article.imageUrl} alt={article.title} loading="lazy" />
-                )}
-              </div>
-              <h2 className={styles.post_title}>{article.title}</h2>
+            <div className={styles.imageContainer}>
+              {article.imageUrl ? (
+                <img src={article.imageUrl} alt={article.title} loading="lazy" />
+              ) : (
+                <div className={styles.placeholderImage}></div>
+              )}
             </div>
-            <p className={styles.post_text}>{article.content}</p>
-            <div className={styles.postFooter}>
-              <cite>by {article.author || 'Anonymous'}</cite>
-              <span className={styles.post_date}>
-                {new Date(article.createdAt).toLocaleDateString()}
-              </span>
+            <div className={styles.contentContainer}>
+              <h2 className={styles.title}>{article.title}</h2>
+              <p className={styles.excerpt}>
+                {article.content.length > 120
+                  ? `${article.content.substring(0, 120)}...`
+                  : article.content}
+              </p>
+              <div className={styles.footer}>
+                <span className={styles.date}>
+                  {new Date(article.createdAt).toLocaleDateString()}
+                </span>
+                <span className={styles.author}>{article.author || 'Kholod Ihor'}</span>
+              </div>
             </div>
           </article>
         )

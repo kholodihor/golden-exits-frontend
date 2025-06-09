@@ -90,6 +90,7 @@
   p {
     font-size: 1.2rem;
     line-height: 2.5rem;
+
     @media screen and (max-width: 550px) {
       font-size: 0.8rem;
     }
@@ -191,6 +192,7 @@
   .edit {
     color: var(--golden);
   }
+
   .delete {
     color: var(--red);
   }

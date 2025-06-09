@@ -59,6 +59,7 @@ export const UploadVideo = () => {
         genre: values.genre,
         url: data.url,
         likes: {},
+        views: 0,
       };
       axios.post('/videos', fields).then(response => {
         setUploading(false);

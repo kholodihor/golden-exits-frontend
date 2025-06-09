@@ -35,7 +35,7 @@ export const VideoPage = () => {
           px: { xs: 1, sm: 2, md: 3 },
         }}
       >
-        <Header title={'Video'} buttonTitle={'upload a video'} to={'/video/upload'} />
+        <Header title={'Video'} buttonTitle={'Upload a Video'} to={'/video/upload'} />
         {!isAuth && (
           <Typography
             variant="body1"
