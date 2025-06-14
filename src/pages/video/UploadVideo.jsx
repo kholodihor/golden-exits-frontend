@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Dropzone from 'react-dropzone';
 import styles from './UploadVideo.module.scss';
 
@@ -16,6 +18,7 @@ export const UploadVideo = () => {
   const [video, setVideo] = useState('');
   const [videoName, setVideoName] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const schema = yup.object().shape({
     title: yup.string().required('Title is required'),
@@ -50,7 +53,11 @@ export const UploadVideo = () => {
   };
 
   const onSubmit = async values => {
+    if (submitting || !video) return;
+
+    setSubmitting(true);
     setUploading(true);
+
     try {
       const { data } = await axios.post('/uploadvideo', { video });
       const fields = {
@@ -61,13 +68,16 @@ export const UploadVideo = () => {
         likes: {},
         views: 0,
       };
-      axios.post('/videos', fields).then(response => {
-        setUploading(false);
-        alert(`Video '${response.data.title}' Uploaded Successfully`);
-        navigate('/video');
-      });
+
+      await axios.post('/videos', fields);
+      alert(`Video '${fields.title}' Uploaded Successfully`);
+      navigate('/video');
     } catch (error) {
-      console.log(error.message);
+      console.error('Error uploading video:', error);
+      alert(error.response?.data?.message || 'Failed to upload video. Please try again.');
+    } finally {
+      setSubmitting(false);
+      setUploading(false);
     }
   };
 
@@ -111,9 +121,22 @@ export const UploadVideo = () => {
             label="Genre"
             fullWidth
           />
-          <button type="submit" size="large" disabled={!video}>
-            Submit
-          </button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!video || submitting}
+            sx={{
+              mt: 2,
+              minWidth: 120,
+              '&.Mui-disabled': {
+                backgroundColor: 'rgba(0, 0, 0, 0.12)',
+                color: 'rgba(0, 0, 0, 0.26)',
+              },
+            }}
+          >
+            {submitting ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+          </Button>
         </div>
       </form>
     </div>

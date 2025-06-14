@@ -38,7 +38,7 @@ export const Post = ({
     isOpen: false,
     title: '',
     subtitle: '',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
 
   const handleLike = useCallback(async () => {

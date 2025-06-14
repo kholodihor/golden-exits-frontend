@@ -12,7 +12,7 @@
 }
 
 .editor {
-  margin: 2rem -2rem;
+  margin: 2rem -2rem 0.5rem;
 
   :global {
     .cm-s-easymde {
@@ -20,6 +20,7 @@
       font-size: 1.2rem;
       color: var(--black);
     }
+
     .editor-toolbar {
       border: 0;
       background-color: var(--golden);
@@ -30,30 +31,37 @@
 
 .buttons {
   display: flex;
+
   button {
     margin-right: 1rem;
     transition: all 0.3s ease-in;
   }
+
   .cancel {
     color: var(--red);
     border: 1px solid var(--red);
+
     &:hover {
       color: #fff;
       background-color: var(--red);
     }
   }
+
   .submit {
     color: var(--golden);
     border: 1px solid var(--golden);
+
     &:hover {
       color: #fff;
       background-color: var(--golden);
     }
   }
 }
+
 button.download {
   color: var(--golden);
   border: 1px solid var(--golden);
+
   &:hover {
     color: #fff;
     background-color: var(--golden);

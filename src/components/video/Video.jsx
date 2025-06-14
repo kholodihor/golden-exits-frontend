@@ -193,18 +193,6 @@ export const Video = ({
                 }}
               >
                 <MenuItem
-                  onClick={handleEdit}
-                  sx={{
-                    py: 1,
-                    '&:hover': { backgroundColor: 'rgba(208, 175, 81, 0.1)' },
-                  }}
-                >
-                  <ListItemIcon>
-                    <EditOutlined fontSize="small" sx={{ color: '#d0af51' }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Edit" sx={{ color: '#d0af51' }} />
-                </MenuItem>
-                <MenuItem
                   onClick={handleDelete}
                   sx={{
                     py: 1,

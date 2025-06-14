@@ -1,8 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchVideos } from '@/redux/slices/videos';
+import { useNavigate } from 'react-router-dom';
+import { fetchVideos, fetchRemoveVideo } from '@/redux/slices/videos';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { Container, Typography, Box } from '@mui/material';
+import Confirm from '@/components/common/Confirm/Confirm';
+import { logger } from '@/utils/logger';
 import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import { Video } from '@/components/video/Video';
@@ -13,9 +16,16 @@ import Grid from '@mui/material/Grid';
 
 export const VideoPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
   const { videos } = useSelector(state => state.videos);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: '',
+    subtitle: '',
+    onConfirm: () => {},
+  });
 
   const isVideosLoading = videos.status === 'loading';
 
@@ -23,10 +33,43 @@ export const VideoPage = () => {
     dispatch(fetchVideos());
   }, [dispatch]);
 
+  const handleDeleteClick = useCallback(
+    videoId => {
+      setConfirmDialog({
+        isOpen: true,
+        title: 'Do you want to remove this video?',
+        subtitle: 'This action cannot be undone',
+        onConfirm: () => {
+          dispatch(fetchRemoveVideo(videoId))
+            .unwrap()
+            .then(() => {
+              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+            })
+            .catch(error => {
+              logger.error('Error removing video:', error);
+              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+            });
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  const handleEditVideo = videoId => {
+    navigate(`/video/edit/${videoId}`);
+  };
+
   if (videos.status === 'error') return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+      <Confirm
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        subtitle={confirmDialog.subtitle}
+        onConfirm={confirmDialog.onConfirm}
+        onClose={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+      />
       <Intro />
       <Container
         maxWidth="xl"
@@ -81,6 +124,8 @@ export const VideoPage = () => {
                   likes={video.likes}
                   isEditable={userData?._id === video.user._id}
                   videoUrl={video.url ? video.url : ''}
+                  onRemove={handleDeleteClick}
+                  onEdit={handleEditVideo}
                 />
               )
             )}
@@ -96,7 +141,9 @@ export const VideoPage = () => {
               alignSelf: { md: 'flex-start' },
             }}
           >
-            <BlogAside />
+            <div style={{ marginTop: '1rem' }}>
+              <BlogAside />
+            </div>
           </Grid>
         </Grid>
       </Container>
