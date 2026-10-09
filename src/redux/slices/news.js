@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
+import { STATUS } from '../status';
 
 const initialState = {
-  news: {
-    items: [],
-    status: 'idle',
-    error: null,
-  },
+  items: [],
+  status: STATUS.IDLE,
+  error: null,
 };
 
 export const getNews = createAsyncThunk('news/getNews', async (_, { rejectWithValue }) => {
@@ -14,7 +13,7 @@ export const getNews = createAsyncThunk('news/getNews', async (_, { rejectWithVa
     const { data } = await axios.get('/news');
     return data;
   } catch (error) {
-    return rejectWithValue(error.response?.data || 'Failed to fetch news');
+    return rejectWithValue(error.response?.data?.message || 'Failed to fetch news');
   }
 });
 
@@ -25,19 +24,23 @@ const newsSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getNews.pending, state => {
-        state.news.status = 'loading';
-        state.news.error = null;
+        state.status = STATUS.LOADING;
+        state.error = null;
       })
       .addCase(getNews.fulfilled, (state, action) => {
-        state.news.items = action.payload;
-        state.news.status = 'succeeded';
-        state.news.error = null;
+        state.items = action.payload;
+        state.status = STATUS.SUCCEEDED;
+        state.error = null;
       })
       .addCase(getNews.rejected, (state, action) => {
-        state.news.status = 'failed';
-        state.news.error = action.payload;
+        state.status = STATUS.FAILED;
+        state.error = action.payload;
       });
   },
 });
+
+export const selectNews = state => state.news.items;
+export const selectNewsStatus = state => state.news.status;
+export const selectNewsError = state => state.news.error;
 
 export const newsReducer = newsSlice.reducer;

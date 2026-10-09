@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts } from '@/redux/slices/posts';
+import { fetchPosts, selectPosts, selectPostsStatus } from '@/redux/slices/posts';
+import { STATUS } from '@/redux/status';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { Container, Grid, Typography, Box } from '@mui/material';
 import { Post } from '@/components/blog/Post/Post';
@@ -14,15 +15,16 @@ export const Blog = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
-  const { posts } = useSelector(state => state.posts);
+  const posts = useSelector(selectPosts);
+  const postsStatus = useSelector(selectPostsStatus);
 
-  const isPostsLoading = posts.status === 'loading';
+  const isPostsLoading = postsStatus === STATUS.LOADING;
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  if (posts.status === 'failed') return <Error />;
+  if (postsStatus === STATUS.FAILED) return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -66,7 +68,7 @@ export const Blog = () => {
               gap: { xs: 2, md: 3 },
             }}
           >
-            {(isPostsLoading ? [...Array(3)] : posts.items).map((post, index) =>
+            {(isPostsLoading ? [...Array(3)] : posts).map((post, index) =>
               isPostsLoading ? (
                 <PostSkeleton key={index} />
               ) : (

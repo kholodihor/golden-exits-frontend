@@ -2,10 +2,12 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
 import { BsCart2 } from 'react-icons/bs';
+import { selectCartItems } from '@/redux/slices/cart';
 import styles from './Navbar.module.scss';
 
 const Navbar = ({ setQuery }) => {
-  const quantity = useSelector(state => state.cart.items.length);
+  // Badge shows the number of distinct products, not total units.
+  const quantity = useSelector(selectCartItems).length;
 
   return (
     <div className={styles.Navbar}>

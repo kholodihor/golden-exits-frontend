@@ -3,7 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import axios from '@/utils/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { selectAuthData, selectIsAuthPending } from '@/redux/slices/auth';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
@@ -15,7 +16,8 @@ import { logger } from '@/utils/logger';
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
-  const userData = useSelector(state => state.auth.data);
+  const userData = useSelector(selectAuthData);
+  const isAuthPending = useSelector(selectIsAuthPending);
   const [video, setVideo] = useState('');
   const [videoName, setVideoName] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -108,6 +110,13 @@ export const UploadVideo = () => {
       setUploading(false);
     }
   };
+
+  // Wait for fetchUser to settle on a hard reload before deciding to redirect.
+  if (isAuthPending) return null;
+
+  if (!userData) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className={styles.UploadVideo}>

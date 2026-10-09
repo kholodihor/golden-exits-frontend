@@ -1,11 +1,10 @@
 import * as yup from 'yup';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useIsAuth } from '@/hooks/useIsAuth';
+import { useDispatch, useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { registerUser } from '@/redux/slices/auth';
+import { registerUser, selectIsAuth } from '@/redux/slices/auth';
 import { convertToBase64 } from '@/utils/base64';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -54,9 +53,8 @@ export const Register = () => {
   };
 
   const onSubmit = async values => {
-    let payload;
     try {
-      payload = await dispatch(
+      await dispatch(
         registerUser({
           username: values.username,
           email: values.email,
@@ -67,14 +65,10 @@ export const Register = () => {
     } catch {
       return alert('Registration Failed');
     }
-
-    if (payload && 'token' in payload) {
-      window.localStorage.setItem('token', payload.token);
-    }
     navigate('/');
   };
 
-  const isAuth = useIsAuth();
+  const isAuth = useSelector(selectIsAuth);
 
   if (isAuth) {
     return <Navigate to="/" />;

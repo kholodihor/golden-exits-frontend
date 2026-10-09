@@ -1,7 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { getNews } from '@/redux/slices/news';
+import { getNews, selectNews, selectNewsError, selectNewsStatus } from '@/redux/slices/news';
+import { selectPosts } from '@/redux/slices/posts';
+import { selectVideos } from '@/redux/slices/videos';
+import { STATUS } from '@/redux/status';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import styles from './BlogAside.module.scss';
 
@@ -9,30 +12,29 @@ export const BlogAside = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { news } = useSelector(state => state.news);
-  const { posts } = useSelector(state => state.posts);
-  const { videos } = useSelector(state => state.videos);
+  const news = useSelector(selectNews);
+  const newsStatus = useSelector(selectNewsStatus);
+  const newsError = useSelector(selectNewsError);
+  const postsCount = useSelector(selectPosts).length;
+  const videosCount = useSelector(selectVideos).length;
 
-  const isNewsLoading = news.status === 'loading';
+  const isNewsLoading = newsStatus === STATUS.LOADING;
 
   useEffect(() => {
     dispatch(getNews());
   }, [dispatch]);
 
-  const postsCount = posts?.items?.length;
-  const videosCount = videos?.items?.length;
-
   const showedNews = useMemo(() => {
-    if (!news.items) return [];
-    if (location.pathname === '/blog') return news.items.slice(0, postsCount || 2);
-    if (location.pathname === '/video') return news.items.slice(0, videosCount || 2);
+    if (!news) return [];
+    if (location.pathname === '/blog') return news.slice(0, postsCount || 2);
+    if (location.pathname === '/video') return news.slice(0, videosCount || 2);
     return [];
-  }, [location.pathname, news.items, postsCount, videosCount]);
+  }, [location.pathname, news, postsCount, videosCount]);
 
-  if (news.status === 'failed') {
+  if (newsStatus === STATUS.FAILED) {
     return (
       <aside className={styles.BlogAside}>
-        <p className={styles.error}>Failed to load news: {news.error}</p>
+        <p className={styles.error}>Failed to load news: {newsError}</p>
       </aside>
     );
   }

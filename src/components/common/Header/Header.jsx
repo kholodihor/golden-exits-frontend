@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout, selectIsAuth } from '@/redux/slices/auth';
+import { logoutUser, selectAuthData, selectIsAuth } from '@/redux/slices/auth';
 import {
   Paper,
   Button,
@@ -25,7 +25,7 @@ import styles from './Header.module.scss';
 const Header = ({ title, buttonTitle, to }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(state => state.auth.data);
+  const user = useSelector(selectAuthData);
   const [anchorEl, setAnchorEl] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -56,8 +56,7 @@ const Header = ({ title, buttonTitle, to }) => {
   };
 
   const logOut = () => {
-    dispatch(logout());
-    window.localStorage.removeItem('token');
+    dispatch(logoutUser());
     setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     navigate('/');
   };

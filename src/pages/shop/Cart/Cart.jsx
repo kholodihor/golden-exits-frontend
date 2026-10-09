@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeProduct, clearCart } from '@/redux/slices/cart';
+import { removeProduct, clearCart, selectCartItems, selectCartTotal } from '@/redux/slices/cart';
 import { logger } from '@/utils/logger';
 import { BiShoppingBag } from 'react-icons/bi';
 import { FaRegTimesCircle } from 'react-icons/fa';
@@ -14,8 +14,8 @@ const formatPrice = value => Number(value || 0).toFixed(2);
 
 export const Cart = () => {
   const dispatch = useDispatch();
-  const total = useSelector(state => state.cart.total);
-  const cart = useSelector(state => state.cart.items);
+  const total = useSelector(selectCartTotal);
+  const cart = useSelector(selectCartItems);
   const amountInCents = Math.round(total * 100);
 
   const onToken = async token => {

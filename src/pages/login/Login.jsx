@@ -1,9 +1,8 @@
 import * as yup from 'yup';
-import { useIsAuth } from '@/hooks/useIsAuth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { loginUser } from '@/redux/slices/auth';
+import { loginUser, selectIsAuth } from '@/redux/slices/auth';
 import { useForm } from 'react-hook-form';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -21,7 +20,7 @@ const schema = yup.object().shape({
 });
 
 export const Login = () => {
-  const isAuth = useIsAuth();
+  const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,15 +38,10 @@ export const Login = () => {
   });
 
   const onSubmit = async values => {
-    let payload;
     try {
-      payload = await dispatch(loginUser(values)).unwrap();
+      await dispatch(loginUser(values)).unwrap();
     } catch {
       return alert('Authorization Failed');
-    }
-
-    if (payload && 'token' in payload) {
-      window.localStorage.setItem('token', payload.token);
     }
     navigate('/');
   };

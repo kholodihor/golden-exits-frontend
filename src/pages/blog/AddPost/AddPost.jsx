@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
-import { selectIsAuth } from '@/redux/slices/auth';
+import { selectIsAuth, selectIsAuthPending } from '@/redux/slices/auth';
 import { useSelector } from 'react-redux';
 import { Container, Alert, Snackbar } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -49,6 +49,7 @@ export const AddPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
+  const isAuthPending = useSelector(selectIsAuthPending);
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
@@ -189,7 +190,10 @@ export const AddPost = () => {
     setError('');
   };
 
-  if (!window.localStorage.getItem('token') && !isAuth) {
+  // Wait for fetchUser to settle on a hard reload before deciding to redirect.
+  if (isAuthPending) return null;
+
+  if (!isAuth) {
     return <Navigate to="/" />;
   }
 

@@ -1,6 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchVideos, fetchRemoveVideo } from '@/redux/slices/videos';
+import {
+  fetchVideos,
+  fetchRemoveVideo,
+  selectVideos,
+  selectVideosStatus,
+} from '@/redux/slices/videos';
+import { STATUS } from '@/redux/status';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { Container, Typography, Box } from '@mui/material';
 import Confirm from '@/components/common/Confirm/Confirm';
@@ -17,7 +23,8 @@ export const VideoPage = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
-  const { videos } = useSelector(state => state.videos);
+  const videos = useSelector(selectVideos);
+  const videosStatus = useSelector(selectVideosStatus);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -25,7 +32,7 @@ export const VideoPage = () => {
     onConfirm: () => {},
   });
 
-  const isVideosLoading = videos.status === 'loading';
+  const isVideosLoading = videosStatus === STATUS.LOADING;
 
   useEffect(() => {
     dispatch(fetchVideos());
@@ -51,7 +58,7 @@ export const VideoPage = () => {
     [dispatch]
   );
 
-  if (videos.status === 'failed') return <Error />;
+  if (videosStatus === STATUS.FAILED) return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -101,7 +108,7 @@ export const VideoPage = () => {
               gap: { xs: 2, md: 3 },
             }}
           >
-            {(isVideosLoading ? [...Array(3)] : videos.items).map((video, index) =>
+            {(isVideosLoading ? [...Array(3)] : videos).map((video, index) =>
               isVideosLoading ? (
                 <PostSkeleton key={index} />
               ) : (
