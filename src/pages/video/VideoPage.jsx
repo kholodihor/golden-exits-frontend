@@ -8,14 +8,13 @@ import {
 } from '@/redux/slices/videos';
 import { STATUS } from '@/redux/status';
 import { selectIsAuth } from '@/redux/slices/auth';
-import { Container, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import Confirm from '@/components/common/Confirm/Confirm';
 import { logger } from '@/utils/logger';
 import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import { Video } from '@/components/video/Video';
-import Intro from '@/components/common/Intro/Intro';
-import Header from '@/components/common/Header/Header';
+import { PageLayout } from '@/components/common/PageLayout/PageLayout';
 import Error from '@/components/common/Error/Error';
 import Grid from '@mui/material/Grid';
 
@@ -69,15 +68,17 @@ export const VideoPage = () => {
         onConfirm={confirmDialog.onConfirm}
         onClose={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
-      <Intro />
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: { xs: 2, md: 4 },
-          px: { xs: 1, sm: 2, md: 3 },
+      <PageLayout
+        title={'Video'}
+        buttonTitle={'Upload a Video'}
+        to={'/video/upload'}
+        containerProps={{
+          sx: {
+            py: { xs: 2, md: 4 },
+            px: { xs: 1, sm: 2, md: 3 },
+          },
         }}
       >
-        <Header title={'Video'} buttonTitle={'Upload a Video'} to={'/video/upload'} />
         {!isAuth && (
           <Typography
             variant="body1"
@@ -144,7 +145,7 @@ export const VideoPage = () => {
             </div>
           </Grid>
         </Grid>
-      </Container>
+      </PageLayout>
     </Box>
   );
 };
