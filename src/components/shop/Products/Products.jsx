@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '@/redux/slices/products';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,17 @@ const Products = ({ query }) => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const filteredProducts = products.items.filter(product => product.category.includes(query));
+  const filteredProducts = useMemo(() => {
+    const q = (query || '').trim().toLowerCase();
+    if (!q) return products.items;
+    return products.items.filter(product => {
+      const { category } = product;
+      if (Array.isArray(category)) {
+        return category.some(c => String(c).toLowerCase().includes(q));
+      }
+      return typeof category === 'string' && category.toLowerCase().includes(q);
+    });
+  }, [products.items, query]);
 
   if (products.status === 'error') return <Error />;
 
@@ -34,7 +44,7 @@ const Products = ({ query }) => {
                   <img src={product.img} alt="" />
                 </div>
                 <h3>{product.title}</h3>
-                <p>${product.price}</p>
+                <p>${Number(product.price || 0).toFixed(2)}</p>
               </Paper>
             </Link>
           )

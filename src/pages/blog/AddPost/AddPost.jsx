@@ -12,6 +12,39 @@ import axios from '@/utils/axios';
 import styles from './AddPost.module.scss';
 import 'easymde/dist/easymde.min.css';
 
+// Kept at module scope so SimpleMDE is not re-instantiated (losing cursor/focus)
+// whenever component state such as `loading` changes.
+const EDITOR_OPTIONS = {
+  spellChecker: false,
+  maxHeight: '40vh',
+  autofocus: true,
+  placeholder: 'Content of Your Post',
+  status: false,
+  autosave: {
+    enabled: false,
+    uniqueId: 'postContent',
+    delay: 1000,
+  },
+  toolbar: [
+    'bold',
+    'italic',
+    'heading',
+    '|',
+    'quote',
+    'unordered-list',
+    'ordered-list',
+    '|',
+    'link',
+    'image',
+    '|',
+    'preview',
+    'side-by-side',
+    'fullscreen',
+    '|',
+    'guide',
+  ],
+};
+
 export const AddPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -80,6 +113,8 @@ export const AddPost = () => {
 
   const removeImage = () => {
     setImage('');
+    // Reset the file input so selecting the same file again still fires onChange.
+    if (inputFileRef.current) inputFileRef.current.value = '';
   };
 
   const addText = useCallback(value => {
@@ -101,9 +136,9 @@ export const AddPost = () => {
     setError('');
 
     try {
-      // Upload image first if it's a new image (not a URL from edit)
+      // Upload image first if it's a new local image (data URL), not an existing URL from edit
       let imageUrl = image;
-      if (image && !image.startsWith('http')) {
+      if (image && image.startsWith('data:')) {
         const { data } = await axios.post('/upload', { image });
         imageUrl = data.url;
       }
@@ -149,42 +184,6 @@ export const AddPost = () => {
         .finally(() => setLoading(false));
     }
   }, [id]);
-
-  const options = useMemo(
-    () => ({
-      spellChecker: false,
-      maxHeight: '40vh',
-      autofocus: true,
-      placeholder: 'Content of Your Post',
-      status: false,
-      autosave: {
-        enabled: false,
-        uniqueId: 'postContent',
-        delay: 1000,
-      },
-      toolbar: loading
-        ? false
-        : [
-            'bold',
-            'italic',
-            'heading',
-            '|',
-            'quote',
-            'unordered-list',
-            'ordered-list',
-            '|',
-            'link',
-            'image',
-            '|',
-            'preview',
-            'side-by-side',
-            'fullscreen',
-            '|',
-            'guide',
-          ],
-    }),
-    [loading]
-  );
 
   // Memoize the editor value to prevent unnecessary re-renders
   const editorValue = useMemo(() => text, [text]);
@@ -266,7 +265,7 @@ export const AddPost = () => {
           value={title}
           onChange={e => setTitle(e.target.value)}
           onBlur={() => handleBlur('title')}
-          error={showError('title')}
+          error={Boolean(showError('title'))}
           helperText={showError('title') ? errors.title : ' '}
           fullWidth
         />
@@ -277,7 +276,7 @@ export const AddPost = () => {
             value={editorValue}
             onChange={addText}
             onBlur={() => handleBlur('text')}
-            options={options}
+            options={EDITOR_OPTIONS}
           />
           {showError('text') && (
             <div

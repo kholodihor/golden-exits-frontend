@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { useIsAuth } from '@/hooks/useIsAuth';
 import { useDispatch } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { loginUser } from '@/redux/slices/auth';
 import { useForm } from 'react-hook-form';
 import Typography from '@mui/material/Typography';
@@ -15,6 +15,7 @@ import styles from './Login.module.scss';
 export const Login = () => {
   const isAuth = useIsAuth();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const schema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -38,15 +39,17 @@ export const Login = () => {
   });
 
   const onSubmit = async values => {
-    const data = await dispatch(loginUser(values));
-
-    if (!data.payload) {
+    let payload;
+    try {
+      payload = await dispatch(loginUser(values)).unwrap();
+    } catch {
       return alert('Authorization Failed');
     }
 
-    if ('token' in data.payload) {
-      window.localStorage.setItem('token', data.payload.token);
+    if (payload && 'token' in payload) {
+      window.localStorage.setItem('token', payload.token);
     }
+    navigate('/');
   };
 
   if (isAuth) {
@@ -66,12 +69,15 @@ export const Login = () => {
             error={Boolean(errors.email?.message)}
             helperText={errors.email?.message}
             type="email"
+            autoComplete="email"
             {...register('email', { required: 'Enter Email' })}
             fullWidth
           />
           <TextField
             className={styles.field}
             label="Password"
+            type="password"
+            autoComplete="current-password"
             error={Boolean(errors.password?.message)}
             helperText={errors.password?.message}
             {...register('password', { required: 'Enter Password' })}

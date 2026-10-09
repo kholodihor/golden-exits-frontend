@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import React, { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from '@/utils/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dropzone from 'react-dropzone';
 import styles from './UploadVideo.module.scss';
+import { logger } from '@/utils/logger';
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
@@ -38,16 +39,43 @@ export const UploadVideo = () => {
     mode: 'onChange',
   });
 
+  const readerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (readerRef.current) {
+        readerRef.current.onloadend = null;
+        readerRef.current.abort();
+        readerRef.current = null;
+      }
+    };
+  }, []);
+
   const setFileToBase64 = file => {
+    if (readerRef.current) {
+      readerRef.current.onloadend = null;
+      readerRef.current.abort();
+    }
     const reader = new FileReader();
-    reader.readAsDataURL(file);
+    readerRef.current = reader;
     reader.onloadend = () => {
+      if (readerRef.current !== reader) return;
+      readerRef.current = null;
+      if (reader.error || typeof reader.result !== 'string') {
+        logger.error('Failed to read video file:', reader.error);
+        setVideo('');
+        setVideoName('');
+        return;
+      }
       setVideo(reader.result);
     };
+    reader.readAsDataURL(file);
   };
 
-  const onDrop = async files => {
-    const file = files[0];
+  const onDrop = acceptedFiles => {
+    const file = acceptedFiles?.[0];
+    if (!file) return;
+    setVideo('');
     setVideoName(file.name);
     setFileToBase64(file);
   };
@@ -73,7 +101,7 @@ export const UploadVideo = () => {
       alert(`Video '${fields.title}' Uploaded Successfully`);
       navigate('/video');
     } catch (error) {
-      console.error('Error uploading video:', error);
+      logger.error('Error uploading video:', error);
       alert(error.response?.data?.message || 'Failed to upload video. Please try again.');
     } finally {
       setSubmitting(false);
@@ -86,7 +114,12 @@ export const UploadVideo = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.left}>
           <h1>Upload your Video</h1>
-          <Dropzone onDrop={onDrop} multiple={false} maxSize={8000000000}>
+          <Dropzone
+            onDrop={onDrop}
+            multiple={false}
+            maxSize={8000000000}
+            accept={{ 'video/*': [] }}
+          >
             {({ getRootProps, getInputProps }) => (
               <section>
                 <div className={styles.dropzone} {...getRootProps()}>

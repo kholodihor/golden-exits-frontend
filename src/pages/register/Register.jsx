@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIsAuth } from '@/hooks/useIsAuth';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { registerUser } from '@/redux/slices/auth';
 import { convertToBase64 } from '@/utils/base64';
@@ -17,6 +17,7 @@ import styles from './Register.module.scss';
 export const Register = () => {
   const [avatarPreview, setAvatarPreview] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const schema = yup.object().shape({
     username: yup.string().min(2).required('Name is required'),
@@ -42,28 +43,35 @@ export const Register = () => {
   });
 
   const handleFileUpload = async event => {
-    const file = event.target.files[0];
-    const avatarToBase64 = await convertToBase64(file);
-    setAvatarPreview(avatarToBase64);
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const avatarToBase64 = await convertToBase64(file);
+      setAvatarPreview(avatarToBase64);
+    } catch {
+      alert('Failed to read the selected image');
+    }
   };
 
   const onSubmit = async values => {
-    const data = await dispatch(
-      registerUser({
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        avatarUrl: avatarPreview,
-      })
-    );
-
-    if (!data.payload) {
+    let payload;
+    try {
+      payload = await dispatch(
+        registerUser({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+          avatarUrl: avatarPreview,
+        })
+      ).unwrap();
+    } catch {
       return alert('Registration Failed');
     }
 
-    if ('token' in data.payload) {
-      window.localStorage.setItem('token', data.payload.token);
+    if (payload && 'token' in payload) {
+      window.localStorage.setItem('token', payload.token);
     }
+    navigate('/');
   };
 
   const isAuth = useIsAuth();
@@ -108,6 +116,7 @@ export const Register = () => {
           error={Boolean(errors.email?.message)}
           helperText={errors.email?.message}
           type="email"
+          autoComplete="email"
           {...register('email', { required: 'Enter Your Email' })}
           className={styles.field}
           label="E-Mail"
@@ -117,6 +126,7 @@ export const Register = () => {
           error={Boolean(errors.password?.message)}
           helperText={errors.password?.message}
           type="password"
+          autoComplete="new-password"
           {...register('password', { required: 'Enter your Password' })}
           className={styles.field}
           label="Password"

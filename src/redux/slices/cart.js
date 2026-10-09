@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const roundCents = value => Math.round(value * 100) / 100;
+
 const initialState = {
   items: [],
   quantity: 0,
@@ -23,12 +25,11 @@ const cartSlice = createSlice({
 
         if (existingProduct) {
           existingProduct.quantity += quantity;
-          state.total += price * quantity;
         } else {
           state.items.push(action.payload);
-          state.quantity += quantity;
-          state.total += price * quantity;
         }
+        state.quantity += quantity;
+        state.total = roundCents(state.total + price * quantity);
         state.error = null;
       } catch (error) {
         state.error = error.message;
@@ -43,7 +44,7 @@ const cartSlice = createSlice({
         }
 
         state.items = state.items.filter(item => item !== itemToRemove);
-        state.total -= itemToRemove.price * itemToRemove.quantity;
+        state.total = roundCents(state.total - itemToRemove.price * itemToRemove.quantity);
         state.quantity -= itemToRemove.quantity;
         state.error = null;
       } catch (error) {

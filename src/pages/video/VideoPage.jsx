@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { fetchVideos, fetchRemoveVideo } from '@/redux/slices/videos';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { Container, Typography, Box } from '@mui/material';
@@ -16,7 +15,6 @@ import Grid from '@mui/material/Grid';
 
 export const VideoPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
   const { videos } = useSelector(state => state.videos);
@@ -40,14 +38,12 @@ export const VideoPage = () => {
         title: 'Do you want to remove this video?',
         subtitle: 'This action cannot be undone',
         onConfirm: () => {
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           dispatch(fetchRemoveVideo(videoId))
             .unwrap()
-            .then(() => {
-              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
-            })
             .catch(error => {
+              if (error?.name === 'ConditionError') return;
               logger.error('Error removing video:', error);
-              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
             });
         },
       });
@@ -55,11 +51,7 @@ export const VideoPage = () => {
     [dispatch]
   );
 
-  const handleEditVideo = videoId => {
-    navigate(`/video/edit/${videoId}`);
-  };
-
-  if (videos.status === 'error') return <Error />;
+  if (videos.status === 'failed') return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -122,10 +114,9 @@ export const VideoPage = () => {
                   createdAt={video.createdAt}
                   views={video.views}
                   likes={video.likes}
-                  isEditable={userData?._id === video.user._id}
+                  isEditable={Boolean(userData?._id) && userData._id === video.user?._id}
                   videoUrl={video.url ? video.url : ''}
                   onRemove={handleDeleteClick}
-                  onEdit={handleEditVideo}
                 />
               )
             )}

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeProduct } from '@/redux/slices/cart';
+import { removeProduct, clearCart } from '@/redux/slices/cart';
+import { logger } from '@/utils/logger';
 import { BiShoppingBag } from 'react-icons/bi';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import styles from './Cart.module.scss';
@@ -10,30 +10,25 @@ import axios from '@/utils/axios';
 
 const KEY = import.meta.env.VITE_APP_STRIPE_PUBLIC_KEY;
 
+const formatPrice = value => Number(value || 0).toFixed(2);
+
 export const Cart = () => {
   const dispatch = useDispatch();
   const total = useSelector(state => state.cart.total);
   const cart = useSelector(state => state.cart.items);
-  const [stripeToken, setStripeToken] = useState(null);
+  const amountInCents = Math.round(total * 100);
 
-  const onToken = token => {
-    setStripeToken(token);
+  const onToken = async token => {
+    try {
+      await axios.post('/payment', {
+        tokenId: token.id,
+        amount: amountInCents,
+      });
+      dispatch(clearCart());
+    } catch (error) {
+      logger.error('Payment failed:', error);
+    }
   };
-
-  useEffect(() => {
-    const makeRequest = async () => {
-      try {
-        const res = await axios.post('/payment', {
-          tokenId: stripeToken.id,
-          amount: total * 100,
-        });
-        console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    stripeToken && makeRequest();
-  }, [stripeToken, total]);
 
   const handleRemoveProduct = id => {
     dispatch(removeProduct(id));
@@ -64,7 +59,7 @@ export const Cart = () => {
                 </div>
                 <div className={styles.pricecontainer}>
                   <div className={styles.price}>
-                    <p>${item.price * item.quantity}</p>
+                    <p>${formatPrice(item.price * item.quantity)}</p>
                   </div>
                   <div className={styles.remove}>
                     <FaRegTimesCircle onClick={() => handleRemoveProduct(item.product._id)} />
@@ -77,14 +72,14 @@ export const Cart = () => {
             <h2>order summary</h2>
             <div className={styles.total}>
               <h3>total</h3>
-              <span>${total}</span>
+              <span>${formatPrice(total)}</span>
             </div>
             <StripeCheckout
               name="Golden Exits"
               billingAddress
               shippingAddress
-              description={`Your total is $${total}`}
-              amount={total * 100}
+              description={`Your total is $${formatPrice(total)}`}
+              amount={amountInCents}
               token={onToken}
               stripeKey={KEY}
             >

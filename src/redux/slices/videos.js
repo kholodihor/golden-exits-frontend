@@ -23,6 +23,9 @@ export const fetchRemoveVideo = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to remove video');
     }
+  },
+  {
+    condition: (id, { getState }) => getState().videos.videos.removingId !== id,
   }
 );
 
@@ -55,6 +58,8 @@ const initialState = {
     items: [],
     status: 'idle',
     error: null,
+    removingId: null,
+    removeError: null,
     currentVideo: null,
     currentVideoStatus: 'idle',
     currentVideoError: null,
@@ -97,18 +102,17 @@ const videoSlice = createSlice({
       })
 
       // Remove Video
-      .addCase(fetchRemoveVideo.pending, state => {
-        state.videos.status = 'loading';
-        state.videos.error = null;
+      .addCase(fetchRemoveVideo.pending, (state, action) => {
+        state.videos.removingId = action.meta.arg;
+        state.videos.removeError = null;
       })
       .addCase(fetchRemoveVideo.fulfilled, (state, action) => {
         state.videos.items = state.videos.items.filter(video => video._id !== action.payload.id);
-        state.videos.status = 'succeeded';
-        state.videos.error = null;
+        state.videos.removingId = null;
       })
       .addCase(fetchRemoveVideo.rejected, (state, action) => {
-        state.videos.status = 'failed';
-        state.videos.error = action.payload;
+        state.videos.removingId = null;
+        state.videos.removeError = action.payload;
       })
 
       // Upload Video

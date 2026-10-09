@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { getNews } from '@/redux/slices/news';
@@ -8,7 +8,6 @@ import styles from './BlogAside.module.scss';
 export const BlogAside = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const [showedNews, setShowedNews] = useState([]);
 
   const { news } = useSelector(state => state.news);
   const { posts } = useSelector(state => state.posts);
@@ -20,17 +19,15 @@ export const BlogAside = () => {
     dispatch(getNews());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!news.items) return;
+  const postsCount = posts?.items?.length;
+  const videosCount = videos?.items?.length;
 
-    if (location.pathname === '/blog') {
-      const sliced = news.items.slice(0, posts?.items?.length || 2);
-      setShowedNews(sliced);
-    } else if (location.pathname === '/video') {
-      const sliced = news.items.slice(0, videos?.items?.length || 2);
-      setShowedNews(sliced);
-    }
-  }, [location.pathname, news.items, posts?.items?.length, videos?.items?.length]);
+  const showedNews = useMemo(() => {
+    if (!news.items) return [];
+    if (location.pathname === '/blog') return news.items.slice(0, postsCount || 2);
+    if (location.pathname === '/video') return news.items.slice(0, videosCount || 2);
+    return [];
+  }, [location.pathname, news.items, postsCount, videosCount]);
 
   if (news.status === 'failed') {
     return (
@@ -57,9 +54,9 @@ export const BlogAside = () => {
             <div className={styles.contentContainer}>
               <h2 className={styles.title}>{article.title}</h2>
               <p className={styles.excerpt}>
-                {article.content.length > 120
+                {article.content?.length > 120
                   ? `${article.content.substring(0, 120)}...`
-                  : article.content}
+                  : article.content || ''}
               </p>
               <div className={styles.footer}>
                 <span className={styles.date}>

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createComment, getPostComments } from '@/redux/slices/comment';
+import {
+  createComment,
+  getPostComments,
+  selectPostComments,
+  selectPostCommentsLoading,
+} from '@/redux/slices/comment';
 import { useForm } from 'react-hook-form';
 import { logger } from '@/utils/logger';
 import { PostSkeleton } from '../Post/PostSkeleton';
@@ -11,12 +16,10 @@ import styles from './Comments.module.scss';
 
 export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) => {
   const dispatch = useDispatch();
-  const commentState = useSelector(state => state.comment);
-  const { comments } = commentState;
+  const comments = useSelector(state => selectPostComments(state, postId));
+  const loading = useSelector(state => selectPostCommentsLoading(state, postId));
   const currentUser = useSelector(state => state.auth.data);
 
-  console.log('Comments component - postId:', postId);
-  console.log('Comments component - Redux comment state:', commentState);
   const {
     register,
     handleSubmit,
@@ -29,8 +32,6 @@ export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) =>
     mode: 'onChange',
   });
 
-  // Use loading state from Redux store
-  const { loading } = useSelector(state => state.comment);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async values => {

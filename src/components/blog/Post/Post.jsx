@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { logger } from '@/utils/logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -34,6 +34,13 @@ export const Post = ({
   const userId = useSelector(state => state?.auth?.data?._id);
   const [isLiked, setIsLiked] = useState(Boolean(likes[userId]));
   const [likeCount, setLikeCount] = useState(Object.keys(likes).length || 0);
+  const likeInFlight = useRef(false);
+
+  // Auth data usually arrives after the first render; resync once userId/likes are known.
+  useEffect(() => {
+    setIsLiked(Boolean(userId && likes?.[userId]));
+    setLikeCount(Object.keys(likes || {}).length);
+  }, [userId, likes]);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -42,12 +49,17 @@ export const Post = ({
   });
 
   const handleLike = useCallback(async () => {
+    if (!userId || likeInFlight.current) return;
+    likeInFlight.current = true;
+    const wasLiked = isLiked;
     try {
       await axios.patch(`posts/${id}/like`, { userId });
-      setIsLiked(prev => !prev);
-      setLikeCount(prev => (isLiked ? prev - 1 : prev + 1));
+      setIsLiked(!wasLiked);
+      setLikeCount(prev => (wasLiked ? prev - 1 : prev + 1));
     } catch (error) {
       logger.error('Error updating like:', error);
+    } finally {
+      likeInFlight.current = false;
     }
   }, [id, userId, isLiked]);
 
@@ -114,7 +126,7 @@ export const Post = ({
                 <span>{commentsCount}</span>
               </div>
               <div className={styles.likes}>
-                <IconButton onClick={handleLike} aria-label="Like post">
+                <IconButton onClick={handleLike} aria-label="Like post" disabled={!userId}>
                   {isLiked ? (
                     <FavoriteOutlined style={{ color: 'var(--red)' }} />
                   ) : (

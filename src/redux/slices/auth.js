@@ -11,10 +11,17 @@ export const loginUser = createAsyncThunk('auth/loginUser', async params => {
   return data;
 });
 
-export const fetchUser = createAsyncThunk('auth/fetchUser', async () => {
-  const { data } = await axios.get('/auth/user');
-  return data;
-});
+export const fetchUser = createAsyncThunk(
+  'auth/fetchUser',
+  async () => {
+    const { data } = await axios.get('/auth/user');
+    return data;
+  },
+  {
+    // Skip the request entirely when there is no token to authenticate with.
+    condition: () => Boolean(window.localStorage.getItem('token')),
+  }
+);
 
 const initialState = {
   data: null,
@@ -57,7 +64,6 @@ const authSlice = createSlice({
       })
       .addCase(fetchUser.pending, state => {
         state.status = 'loading';
-        state.data = null;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = 'loaded';

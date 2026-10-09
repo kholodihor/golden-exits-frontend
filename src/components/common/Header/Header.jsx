@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { useIsAuth } from '@/hooks/useIsAuth';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { logout } from '@/redux/slices/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout, selectIsAuth } from '@/redux/slices/auth';
 import {
   Paper,
   Button,
@@ -25,6 +24,7 @@ import styles from './Header.module.scss';
 
 const Header = ({ title, buttonTitle, to }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector(state => state.auth.data);
   const [anchorEl, setAnchorEl] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -33,7 +33,7 @@ const Header = ({ title, buttonTitle, to }) => {
     subtitle: '',
   });
 
-  const isAuth = useIsAuth();
+  const isAuth = useSelector(selectIsAuth);
 
   const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -58,10 +58,8 @@ const Header = ({ title, buttonTitle, to }) => {
   const logOut = () => {
     dispatch(logout());
     window.localStorage.removeItem('token');
-    setConfirmDialog({
-      ...confirmDialog,
-      isOpen: false,
-    });
+    setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+    navigate('/');
   };
 
   return (
@@ -184,7 +182,7 @@ const Header = ({ title, buttonTitle, to }) => {
         title={confirmDialog.title}
         subtitle={confirmDialog.subtitle}
         onConfirm={confirmDialog.onConfirm}
-        onClose={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+        onClose={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
     </Paper>
   );

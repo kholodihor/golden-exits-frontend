@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { logger } from '@/utils/logger';
 import { useSelector } from 'react-redux';
 import axios from '@/utils/axios';
@@ -38,38 +38,76 @@ export const Video = ({
   likes,
   isEditable,
   onRemove,
-  onEdit,
 }) => {
   const videoRef = useRef();
+  const likeInFlightRef = useRef(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const userId = useSelector(state => state?.auth?.data?._id);
-  const [viewsCount, setViewsCount] = useState(views);
-  const [isLiked, setIsLiked] = useState(Boolean(likes[userId]));
-  const [likeCount, setLikeCount] = useState(Object.keys(likes).length);
+  const [viewsCount, setViewsCount] = useState(views ?? 0);
+  const viewsCountRef = useRef(views ?? 0);
+  const [likesMap, setLikesMap] = useState(likes || {});
+
+  useEffect(() => {
+    setViewsCount(views ?? 0);
+    viewsCountRef.current = views ?? 0;
+  }, [views]);
+
+  useEffect(() => {
+    setLikesMap(likes || {});
+  }, [likes]);
+
+  const isLiked = Boolean(userId && likesMap[userId]);
+  const likeCount = Object.keys(likesMap).length;
+
+  const createdAtDate = createdAt ? new Date(createdAt) : null;
+  const createdAtText =
+    createdAtDate && !Number.isNaN(createdAtDate.getTime())
+      ? formatDistanceToNow(createdAtDate, { addSuffix: true })
+      : '';
 
   const handleViewsCount = useCallback(async () => {
+    setHasStarted(true);
     if (videoRef.current?.currentTime <= 1) {
-      setViewsCount(prev => prev + 1);
+      const nextViews = viewsCountRef.current + 1;
+      viewsCountRef.current = nextViews;
+      setViewsCount(nextViews);
       try {
         await axios.patch(`/videos/${id}`, {
-          views: viewsCount,
+          views: nextViews,
         });
       } catch (err) {
         logger.warn('Failed to update view count:', err);
       }
     }
-  }, [id, viewsCount]);
+  }, [id]);
 
   const handleLike = useCallback(async () => {
+    if (!userId || likeInFlightRef.current) return;
+    likeInFlightRef.current = true;
     try {
       await axios.patch(`videos/${id}/like`, { userId });
-      setIsLiked(prev => !prev);
-      setLikeCount(prev => prev + (isLiked ? -1 : 1));
+      setLikesMap(prev => {
+        const next = { ...prev };
+        if (next[userId]) {
+          delete next[userId];
+        } else {
+          next[userId] = true;
+        }
+        return next;
+      });
     } catch (error) {
       logger.warn('Failed to update like:', error);
+    } finally {
+      likeInFlightRef.current = false;
     }
-  }, [id, userId, isLiked]);
+  }, [id, userId]);
+
+  const handlePlayClick = () => {
+    const playPromise = videoRef.current?.play();
+    playPromise?.catch?.(err => logger.warn('Failed to play video:', err));
+  };
 
   const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -77,11 +115,6 @@ export const Video = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleEdit = () => {
-    handleMenuClose();
-    onEdit?.(id);
   };
 
   const handleDelete = () => {
@@ -112,9 +145,9 @@ export const Video = ({
           <video
             className={styles.video}
             src={videoUrl}
-            alt={title}
+            aria-label={title}
             muted
-            controls={isHovered}
+            controls={isHovered || hasStarted}
             preload="metadata"
             onPlay={handleViewsCount}
             ref={videoRef}
@@ -127,8 +160,9 @@ export const Video = ({
               objectFit: 'cover',
             }}
           />
-          <Fade in={!isHovered}>
+          <Fade in={!isHovered && !hasStarted}>
             <Box
+              onClick={handlePlayClick}
               sx={{
                 position: 'absolute',
                 top: 0,
@@ -142,6 +176,11 @@ export const Video = ({
               }}
             >
               <IconButton
+                aria-label="Play video"
+                onClick={event => {
+                  event.stopPropagation();
+                  handlePlayClick();
+                }}
                 sx={{
                   backgroundColor: 'rgba(255, 255, 255, 0.3)',
                 }}
@@ -211,10 +250,7 @@ export const Video = ({
       )}
       <Box sx={{ p: 2 }}>
         <Box sx={{ mb: 2 }}>
-          <UserInfo
-            {...user}
-            additionalText={formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
-          />
+          <UserInfo {...user} additionalText={createdAtText} />
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography
@@ -251,14 +287,14 @@ export const Video = ({
             gap: 2,
           }}
         >
-          <Tooltip title={isLiked ? 'Unlike' : 'Like'} arrow>
+          <Tooltip title={!userId ? 'Login to like' : isLiked ? 'Unlike' : 'Like'} arrow>
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
                 color: isLiked ? '#d0af51' : 'text.secondary',
-                cursor: 'pointer',
+                cursor: userId ? 'pointer' : 'default',
               }}
               onClick={handleLike}
             >

@@ -22,7 +22,7 @@ export const Blog = () => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  if (posts.status === 'error') return <Error />;
+  if (posts.status === 'failed') return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -80,7 +80,7 @@ export const Blog = () => {
                   createdAt={post.createdAt}
                   likes={post.likes}
                   comments={post.comments}
-                  isEditable={userData?._id === post.user._id}
+                  isEditable={Boolean(userData?._id) && userData._id === post.user?._id}
                 />
               )
             )}
