@@ -58,7 +58,7 @@ export const Post = ({
     likeInFlight.current = true;
     const wasLiked = isLiked;
     try {
-      await axios.patch(`posts/${id}/like`, { userId });
+      await axios.patch(`/posts/${id}/like`);
       setIsLiked(!wasLiked);
       setLikeCount(prev => (wasLiked ? prev - 1 : prev + 1));
     } catch (error) {
@@ -92,24 +92,26 @@ export const Post = ({
     setCommentsOpen(prev => !prev);
   }, []);
 
+  const ownerButtons = (
+    <>
+      <IconButton
+        component={Link}
+        to={`/edit-post/${id}`}
+        className={styles.edit}
+        aria-label="Edit post"
+      >
+        <EditIcon />
+      </IconButton>
+      <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
+        <DeleteIcon />
+      </IconButton>
+    </>
+  );
+
   return (
     <>
       <Paper className={styles.Post}>
-        {isEditable && (
-          <div className={styles.editButtons}>
-            <IconButton
-              component={Link}
-              to={`/edit-post/${id}`}
-              className={styles.edit}
-              aria-label="Edit post"
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        )}
+        {isEditable && imageUrl && <div className={styles.editButtons}>{ownerButtons}</div>}
         {imageUrl && <img className={styles.image} src={imageUrl} alt={title} loading="lazy" />}
         <div className={styles.wrapper}>
           <div className={styles.wrapperHeader}>
@@ -131,6 +133,7 @@ export const Post = ({
                 </IconButton>
                 <span>{likeCount}</span>
               </div>
+              {isEditable && !imageUrl && ownerButtons}
             </div>
           </div>
           <Typography variant="h5" component="h2" className={styles.title}>

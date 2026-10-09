@@ -28,9 +28,10 @@ export const useVideoStats = ({ id, views, likes, videoRef }) => {
       viewsCountRef.current = nextViews;
       setViewsCount(nextViews);
       try {
-        await axios.patch(`/videos/${id}`, {
-          views: nextViews,
-        });
+        // The server increments atomically and returns the real count.
+        const { data } = await axios.post(`/videos/${id}/views`);
+        viewsCountRef.current = data.views;
+        setViewsCount(data.views);
       } catch (err) {
         logger.warn('Failed to update view count:', err);
       }
@@ -41,13 +42,13 @@ export const useVideoStats = ({ id, views, likes, videoRef }) => {
     if (!userId || likeInFlightRef.current) return;
     likeInFlightRef.current = true;
     try {
-      await axios.patch(`videos/${id}/like`, { userId });
+      const { data } = await axios.patch(`/videos/${id}/like`);
       setLikesMap(prev => {
         const next = { ...prev };
-        if (next[userId]) {
-          delete next[userId];
-        } else {
+        if (data.liked) {
           next[userId] = true;
+        } else {
+          delete next[userId];
         }
         return next;
       });

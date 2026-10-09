@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
-import { logger } from '@/utils/logger';
+import { apiErrorMessage } from '@/utils/apiError';
 
 // Comments are keyed by postId so several open posts don't share one list.
 const initialState = {
@@ -10,18 +10,13 @@ const initialState = {
 
 export const createComment = createAsyncThunk(
   'comment/createComment',
-  async ({ postId, comment, userId, user }) => {
+  async ({ postId, comment }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`/comments/${postId}`, {
-        userId,
-        comment,
-        user,
-        createdAt: new Date().toISOString(),
-      });
-      return data;
+      // The server takes the author from the auth token and returns the populated comment.
+      const { data } = await axios.post(`/comments/${postId}`, { comment });
+      return data.newComment;
     } catch (error) {
-      logger.error('Failed to create comment:', error);
-      throw error;
+      return rejectWithValue({ message: apiErrorMessage(error, 'Failed to add comment') });
     }
   }
 );
@@ -30,29 +25,10 @@ export const getPostComments = createAsyncThunk(
   'comment/getPostComments',
   async (postId, { rejectWithValue }) => {
     try {
-      // Try the new endpoint format first
       const { data } = await axios.get(`/comments/${postId}`);
-
-      // Handle different API response formats
-      if (data.success && Array.isArray(data.comments)) {
-        // New API format: { success: true, comments: [...] }
-        return data.comments;
-      } else if (Array.isArray(data)) {
-        // Old API format: direct array of comments
-        return data;
-      } else {
-        // Fallback to empty array if no valid format is found
-        return [];
-      }
+      return data.comments;
     } catch (error) {
-      // If the new endpoint fails, try the old endpoint format as fallback
-      try {
-        const { data } = await axios.get(`/posts/comments/${postId}`);
-        return Array.isArray(data) ? data : [];
-      } catch (fallbackError) {
-        logger.error('Failed to fetch post comments from both endpoints:', error, fallbackError);
-        return rejectWithValue(error.response?.data || 'Failed to fetch comments');
-      }
+      return rejectWithValue(apiErrorMessage(error, 'Failed to fetch comments'));
     }
   }
 );
@@ -65,15 +41,8 @@ const commentSlice = createSlice({
     builder
       .addCase(createComment.fulfilled, (state, action) => {
         const { postId } = action.meta.arg;
-        // Handle the new API response format which returns { success: true, comment: {...} }
-        // or the old format with newComment wrapper
-        const newComment =
-          action.payload.success && action.payload.comment
-            ? action.payload.comment
-            : action.payload.newComment || action.payload;
-
         if (!state.byPostId[postId]) state.byPostId[postId] = [];
-        state.byPostId[postId].push(newComment);
+        state.byPostId[postId].push(action.payload);
       })
       .addCase(getPostComments.pending, (state, action) => {
         state.loadingByPostId[action.meta.arg] = true;

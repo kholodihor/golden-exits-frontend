@@ -44,18 +44,7 @@ export const Comments = ({ postId, onCommentAdd }) => {
       setSubmitting(true);
       const comment = values.comment;
 
-      await dispatch(
-        createComment({
-          postId,
-          comment,
-          userId: currentUser._id,
-          user: {
-            username: currentUser.username || 'User',
-            avatarUrl: currentUser.avatarUrl || '',
-            fullName: currentUser.fullName || '',
-          },
-        })
-      ).unwrap();
+      await dispatch(createComment({ postId, comment })).unwrap();
 
       onCommentAdd && onCommentAdd();
       reset({ comment: '' });
@@ -79,13 +68,8 @@ export const Comments = ({ postId, onCommentAdd }) => {
       return <div className={styles.noComments}>No comments yet</div>;
     }
 
-    return comments.map((item, index) => {
-      // Handle different comment structure formats
-      const commentData = item.newComment || item;
-
-      // Handle different user data formats
-      // If user is an object, use it directly; if it's an ID, use currentUser as fallback
-      // This ensures we use the same avatar URL format as in the Header component
+    return comments.map((commentData, index) => {
+      // The server populates `user`; fall back to the current user if it ever arrives unpopulated.
       const userData = typeof commentData.user === 'object' ? commentData.user : currentUser;
 
       return (

@@ -16,7 +16,7 @@ import styles from './UploadVideo.module.scss';
 import { logger } from '@/utils/logger';
 
 const schema = yup.object().shape({
-  title: yup.string().required('Title is required'),
+  title: yup.string().max(50, 'Title must be at most 50 characters').required('Title is required'),
   genre: yup.string().required('Genre is required'),
 });
 
@@ -91,14 +91,8 @@ export const UploadVideo = () => {
 
     try {
       const { data } = await axios.post('/uploadvideo', { video });
-      const fields = {
-        user: userData._id,
-        title: values.title,
-        genre: values.genre,
-        url: data.url,
-        likes: {},
-        views: 0,
-      };
+      // The owner comes from the auth token; likes/views start empty server-side.
+      const fields = { title: values.title, genre: values.genre, url: data.url };
 
       await axios.post('/videos', fields);
       alert(`Video '${fields.title}' Uploaded Successfully`);

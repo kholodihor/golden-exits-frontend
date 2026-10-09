@@ -22,7 +22,8 @@ export const Cart = () => {
     try {
       await axios.post('/payment', {
         tokenId: token.id,
-        amount: amountInCents,
+        // The server prices the cart itself; only ids and quantities are sent.
+        items: cart.map(item => ({ productId: item.product._id, quantity: item.quantity })),
       });
       dispatch(clearCart());
     } catch (error) {
