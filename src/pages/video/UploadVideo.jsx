@@ -9,10 +9,16 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dropzone from 'react-dropzone';
 import styles from './UploadVideo.module.scss';
 import { logger } from '@/utils/logger';
+
+const schema = yup.object().shape({
+  title: yup.string().required('Title is required'),
+  genre: yup.string().required('Genre is required'),
+});
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
@@ -20,13 +26,8 @@ export const UploadVideo = () => {
   const isAuthPending = useSelector(selectIsAuthPending);
   const [video, setVideo] = useState('');
   const [videoName, setVideoName] = useState('');
-  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const schema = yup.object().shape({
-    title: yup.string().required('Title is required'),
-    genre: yup.string().required('Genre is required'),
-  });
+  const [submitError, setSubmitError] = useState('');
 
   const {
     register,
@@ -83,10 +84,10 @@ export const UploadVideo = () => {
   };
 
   const onSubmit = async values => {
+    setSubmitError('');
     if (submitting || !video) return;
 
     setSubmitting(true);
-    setUploading(true);
 
     try {
       const { data } = await axios.post('/uploadvideo', { video });
@@ -104,10 +105,9 @@ export const UploadVideo = () => {
       navigate('/video');
     } catch (error) {
       logger.error('Error uploading video:', error);
-      alert(error.response?.data?.message || 'Failed to upload video. Please try again.');
+      setSubmitError(error.response?.data?.message || 'Failed to upload video. Please try again.');
     } finally {
       setSubmitting(false);
-      setUploading(false);
     }
   };
 
@@ -133,11 +133,11 @@ export const UploadVideo = () => {
               <section>
                 <div className={styles.dropzone} {...getRootProps()}>
                   <input {...getInputProps()} />
-                  {uploading && <p>Wait a little while we are uploading your video...</p>}
-                  {!videoName && !uploading && (
+                  {submitting && <p>Wait a little while we are uploading your video...</p>}
+                  {!videoName && !submitting && (
                     <AiOutlinePlus style={{ fontSize: '2rem', cursor: 'pointer' }} />
                   )}
-                  {videoName && !uploading && <p>{videoName}</p>}
+                  {videoName && !submitting && <p>{videoName}</p>}
                 </div>
               </section>
             )}
@@ -148,21 +148,22 @@ export const UploadVideo = () => {
           <TextField
             error={Boolean(errors.title?.message)}
             helperText={errors.title?.message}
-            type="title"
-            {...register('title', { required: 'Name Your Video' })}
+            {...register('title')}
             label="Title"
             fullWidth
           />
           <TextField
             error={Boolean(errors.genre?.message)}
             helperText={errors.genre?.message}
-            type="genre"
-            {...register('genre', {
-              required: 'What is the genre of your Video',
-            })}
+            {...register('genre')}
             label="Genre"
             fullWidth
           />
+          {submitError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {submitError}
+            </Alert>
+          )}
           <Button
             type="submit"
             variant="contained"

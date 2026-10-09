@@ -1,14 +1,14 @@
 import * as yup from 'yup';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { loginUser, selectIsAuth } from '@/redux/slices/auth';
 import { useForm } from 'react-hook-form';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import { AuthCard } from '@/components/common/AuthCard/AuthCard';
 import styles from './Login.module.scss';
 
 const schema = yup.object().shape({
@@ -20,6 +20,7 @@ const schema = yup.object().shape({
 });
 
 export const Login = () => {
+  const [submitError, setSubmitError] = useState('');
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,10 +39,12 @@ export const Login = () => {
   });
 
   const onSubmit = async values => {
+    setSubmitError('');
     try {
       await dispatch(loginUser(values)).unwrap();
-    } catch {
-      return alert('Authorization Failed');
+    } catch (error) {
+      setSubmitError(error?.message || 'Authorization failed');
+      return;
     }
     navigate('/');
   };
@@ -52,10 +55,12 @@ export const Login = () => {
 
   return (
     <Container classes={{ root: styles.wrapper }}>
-      <Paper classes={{ root: styles.form }}>
-        <Typography classes={{ root: styles.title }} variant="h5">
-          Enter to Account
-        </Typography>
+      <AuthCard
+        className={styles.form}
+        titleClassName={styles.title}
+        title="Enter to Account"
+        error={submitError}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             className={styles.field}
@@ -81,7 +86,7 @@ export const Login = () => {
             LogIn
           </Button>
         </form>
-      </Paper>
+      </AuthCard>
     </Container>
   );
 };

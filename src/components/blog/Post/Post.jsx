@@ -26,6 +26,7 @@ export const Post = ({
   likes = {},
   comments = [],
   isFullPost,
+  onRemoved,
 }) => {
   const dispatch = useDispatch();
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -40,6 +41,11 @@ export const Post = ({
     setIsLiked(Boolean(userId && likes?.[userId]));
     setLikeCount(Object.keys(likes || {}).length);
   }, [userId, likes]);
+
+  // Resync the comments counter when the source prop changes.
+  useEffect(() => {
+    setCommentsCount(comments?.length);
+  }, [comments?.length]);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -72,6 +78,7 @@ export const Post = ({
           .unwrap()
           .then(() => {
             setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+            onRemoved?.();
           })
           .catch(error => {
             logger.error('Error removing post:', error);
@@ -79,7 +86,7 @@ export const Post = ({
           });
       },
     });
-  }, [id, dispatch]);
+  }, [id, dispatch, onRemoved]);
 
   const toggleComments = useCallback(() => {
     setCommentsOpen(prev => !prev);
@@ -90,11 +97,14 @@ export const Post = ({
       <Paper className={styles.Post}>
         {isEditable && (
           <div className={styles.editButtons}>
-            <Link to={`/edit-post/${id}`}>
-              <IconButton className={styles.edit} aria-label="Edit post">
-                <EditIcon />
-              </IconButton>
-            </Link>
+            <IconButton
+              component={Link}
+              to={`/edit-post/${id}`}
+              className={styles.edit}
+              aria-label="Edit post"
+            >
+              <EditIcon />
+            </IconButton>
             <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
               <DeleteIcon />
             </IconButton>
@@ -106,7 +116,7 @@ export const Post = ({
             <UserInfo {...user} createdAt={createdAt} />
             <div className={styles.actions}>
               <div className={styles.comments} onClick={toggleComments}>
-                <IconButton aria-label="Comments">
+                <IconButton aria-expanded={commentsOpen} aria-label="Comments">
                   <CommentIcon />
                 </IconButton>
                 <span>{commentsCount}</span>

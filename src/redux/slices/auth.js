@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
 import { STATUS } from '../status';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const TOKEN_KEY = 'token';
 
@@ -13,14 +14,26 @@ const persistToken = data => {
   return data;
 };
 
-export const registerUser = createAsyncThunk('auth/registerUser', async params => {
-  const { data } = await axios.post('/auth/register', params);
-  return persistToken(data);
-});
+// Rejected with { message } so `.unwrap()` callers can read error.message.
+export const registerUser = createAsyncThunk(
+  'auth/registerUser',
+  async (params, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post('/auth/register', params);
+      return persistToken(data);
+    } catch (error) {
+      return rejectWithValue({ message: apiErrorMessage(error, 'Registration failed') });
+    }
+  }
+);
 
-export const loginUser = createAsyncThunk('auth/loginUser', async params => {
-  const { data } = await axios.post('/auth/login', params);
-  return persistToken(data);
+export const loginUser = createAsyncThunk('auth/loginUser', async (params, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.post('/auth/login', params);
+    return persistToken(data);
+  } catch (error) {
+    return rejectWithValue({ message: apiErrorMessage(error, 'Authorization failed') });
+  }
 });
 
 export const fetchUser = createAsyncThunk(

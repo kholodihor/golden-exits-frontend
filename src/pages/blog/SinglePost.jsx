@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { logger } from '@/utils/logger';
 import axios from '@/utils/axios';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Post } from '@/components/blog/Post/Post';
 import { Container, Alert } from '@mui/material';
 import { BsArrowLeftCircleFill } from 'react-icons/bs';
@@ -13,6 +13,7 @@ export const SinglePost = () => {
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { id } = useParams();
+  const navigate = useNavigate();
   const userId = useSelector(state => state?.auth?.data?._id);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export const SinglePost = () => {
                 comments={data.comments}
                 isEditable={Boolean(userId) && userId === data.user?._id}
                 isFullPost
+                onRemoved={() => navigate('/blog')}
               />
             )}
           </Container>

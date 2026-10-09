@@ -89,7 +89,7 @@ export const Comments = ({ postId, onCommentAdd }) => {
       const userData = typeof commentData.user === 'object' ? commentData.user : currentUser;
 
       return (
-        <div key={index} className={styles.comment}>
+        <div key={commentData._id || index} className={styles.comment}>
           <UserInfo
             avatarUrl={userData?.avatarUrl}
             username={userData?.username || 'User'}

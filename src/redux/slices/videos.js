@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
+import { apiErrorMessage } from '@/utils/apiError';
 import { STATUS } from '../status';
 
 export const fetchVideos = createAsyncThunk(
@@ -9,7 +10,7 @@ export const fetchVideos = createAsyncThunk(
       const { data } = await axios.get('/videos');
       return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch videos');
+      return rejectWithValue(apiErrorMessage(error, 'Failed to fetch videos'));
     }
   }
 );
@@ -21,7 +22,7 @@ export const fetchRemoveVideo = createAsyncThunk(
       const { data } = await axios.delete(`/videos/${id}`);
       return { id, data };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to remove video');
+      return rejectWithValue(apiErrorMessage(error, 'Failed to remove video'));
     }
   },
   {

@@ -1,9 +1,17 @@
 import { Container } from '@mui/material';
+import { Link } from 'react-router-dom';
 import pt1 from '@/assets/img/arrivals/product-type-1.jpg';
 import pt2 from '@/assets/img/arrivals/product-type-2.jpg';
 import pt3 from '@/assets/img/arrivals/product-type-3.jpg';
 import pt4 from '@/assets/img/arrivals/product-type-4.jpg';
 import styles from './AboutGE.module.scss';
+
+const images = [
+  { src: pt1, alt: 'shirt' },
+  { src: pt2, alt: 'shoes' },
+  { src: pt3, alt: 'jeans' },
+  { src: pt4, alt: 'hoodie' },
+];
 
 const AboutGE = () => {
   return (
@@ -12,15 +20,14 @@ const AboutGE = () => {
         <h1>
           About <span>Golden Exits</span>{' '}
         </h1>
-        <p>Read the History</p>
+        <Link to="/blog">Read the History</Link>
       </div>
       <Container maxWidth="lg">
         <div className={styles.inner}>
           <div className={styles.grid}>
-            <img src={pt1} alt="shirt" />
-            <img src={pt2} alt="shoes" />
-            <img src={pt3} alt="jeans" />
-            <img src={pt4} alt="hoodie" />
+            {images.map(({ src, alt }) => (
+              <img src={src} alt={alt} key={alt} />
+            ))}
           </div>
           <div className={styles.textbox}>
             <div className={styles.textbox_inner}>

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Box, IconButton, Fade, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { EditOutlined, DeleteOutlined } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 export const VideoOwnerMenu = ({ id, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const removingId = useSelector(state => state.videos.removingId);
 
   const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -62,6 +64,7 @@ export const VideoOwnerMenu = ({ id, onRemove }) => {
       >
         <MenuItem
           onClick={handleDelete}
+          disabled={removingId === id}
           sx={{
             py: 1,
             '&:hover': { backgroundColor: 'rgba(255, 59, 48, 0.1)' },

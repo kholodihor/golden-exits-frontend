@@ -6,11 +6,10 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { registerUser, selectIsAuth } from '@/redux/slices/auth';
 import { convertToBase64 } from '@/utils/base64';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import { AuthCard } from '@/components/common/AuthCard/AuthCard';
 import styles from './Register.module.scss';
 
 const schema = yup.object().shape({
@@ -24,6 +23,7 @@ const schema = yup.object().shape({
 
 export const Register = () => {
   const [avatarPreview, setAvatarPreview] = useState('');
+  const [submitError, setSubmitError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,6 +44,10 @@ export const Register = () => {
   const handleFileUpload = async event => {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setSubmitError('Avatar must be 2 MB or smaller');
+      return;
+    }
     try {
       const avatarToBase64 = await convertToBase64(file);
       setAvatarPreview(avatarToBase64);
@@ -53,6 +57,7 @@ export const Register = () => {
   };
 
   const onSubmit = async values => {
+    setSubmitError('');
     try {
       await dispatch(
         registerUser({
@@ -62,8 +67,9 @@ export const Register = () => {
           avatarUrl: avatarPreview,
         })
       ).unwrap();
-    } catch {
-      return alert('Registration Failed');
+    } catch (error) {
+      setSubmitError(error?.message || 'Registration failed');
+      return;
     }
     navigate('/');
   };
@@ -75,10 +81,12 @@ export const Register = () => {
   }
 
   return (
-    <Paper classes={{ root: styles.form }}>
-      <Typography classes={{ root: styles.title }} variant="h5">
-        Create Your Account
-      </Typography>
+    <AuthCard
+      className={styles.form}
+      titleClassName={styles.title}
+      title="Create Your Account"
+      error={submitError}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="fileUpload">
           <div className={styles.avatar}>
@@ -130,6 +138,6 @@ export const Register = () => {
           Register
         </Button>
       </form>
-    </Paper>
+    </AuthCard>
   );
 };

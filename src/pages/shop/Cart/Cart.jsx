@@ -90,8 +90,8 @@ export const Cart = () => {
           </div>
         </div>
       ) : null}
-      <Link to="/shop">
-        <button className={styles.continue}>continue shopping</button>
+      <Link to="/shop" className={styles.continue}>
+        continue shopping
       </Link>
     </div>
   );

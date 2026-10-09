@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
+import { apiErrorMessage } from '@/utils/apiError';
 import { STATUS } from '../status';
 
 const initialState = {
@@ -13,7 +14,7 @@ export const getNews = createAsyncThunk('news/getNews', async (_, { rejectWithVa
     const { data } = await axios.get('/news');
     return data;
   } catch (error) {
-    return rejectWithValue(error.response?.data?.message || 'Failed to fetch news');
+    return rejectWithValue(apiErrorMessage(error, 'Failed to fetch news'));
   }
 });
 

@@ -52,6 +52,7 @@ export const Product = () => {
   const addToCart = () => {
     if (!product || !quantity) return;
     dispatch(addProduct({ product, quantity, price: product.price }));
+    setQuantity(0);
     setNotify({
       isOpen: true,
       message: `"${product.title}" added to cart`,
@@ -82,9 +83,13 @@ export const Product = () => {
           <p className={styles.desc}>{product.desc}</p>
           <p className={styles.price}>${Number(product.price || 0).toFixed(2)}</p>
           <div className={styles.quantity}>
-            <span onClick={decrease}>-</span>
+            <button type="button" onClick={decrease} aria-label="Decrease quantity">
+              -
+            </button>
             <span>{quantity}</span>
-            <span onClick={increase}>+</span>
+            <button type="button" onClick={increase} aria-label="Increase quantity">
+              +
+            </button>
           </div>
           <button className={styles.button} disabled={!quantity} onClick={addToCart}>
             add to cart

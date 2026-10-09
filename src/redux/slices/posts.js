@@ -1,10 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/utils/axios';
 import { STATUS } from '../status';
+import { apiErrorMessage } from '@/utils/apiError';
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const { data } = await axios.get('/posts');
-  return data;
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (_, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.get('/posts');
+    return data;
+  } catch (error) {
+    return rejectWithValue(apiErrorMessage(error, 'Failed to fetch posts'));
+  }
 });
 
 export const removePost = createAsyncThunk('posts/removePost', async id => {
@@ -34,7 +39,7 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.payload ?? action.error.message;
       })
       .addCase(removePost.fulfilled, (state, action) => {
         state.items = state.items.filter(post => post._id !== action.payload);
