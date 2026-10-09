@@ -1,25 +1,29 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { fetchVideos, fetchRemoveVideo } from '@/redux/slices/videos';
+import {
+  fetchVideos,
+  fetchRemoveVideo,
+  selectVideos,
+  selectVideosStatus,
+} from '@/redux/slices/videos';
+import { STATUS } from '@/redux/status';
 import { selectIsAuth } from '@/redux/slices/auth';
-import { Container, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import Confirm from '@/components/common/Confirm/Confirm';
 import { logger } from '@/utils/logger';
 import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
 import { Video } from '@/components/video/Video';
-import Intro from '@/components/common/Intro/Intro';
-import Header from '@/components/common/Header/Header';
+import { PageLayout } from '@/components/common/PageLayout/PageLayout';
 import Error from '@/components/common/Error/Error';
 import Grid from '@mui/material/Grid';
 
 export const VideoPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
-  const { videos } = useSelector(state => state.videos);
+  const videos = useSelector(selectVideos);
+  const videosStatus = useSelector(selectVideosStatus);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -27,7 +31,7 @@ export const VideoPage = () => {
     onConfirm: () => {},
   });
 
-  const isVideosLoading = videos.status === 'loading';
+  const isVideosLoading = videosStatus === STATUS.LOADING;
 
   useEffect(() => {
     dispatch(fetchVideos());
@@ -40,14 +44,12 @@ export const VideoPage = () => {
         title: 'Do you want to remove this video?',
         subtitle: 'This action cannot be undone',
         onConfirm: () => {
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
           dispatch(fetchRemoveVideo(videoId))
             .unwrap()
-            .then(() => {
-              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
-            })
             .catch(error => {
+              if (error?.name === 'ConditionError') return;
               logger.error('Error removing video:', error);
-              setConfirmDialog(prev => ({ ...prev, isOpen: false }));
             });
         },
       });
@@ -55,11 +57,7 @@ export const VideoPage = () => {
     [dispatch]
   );
 
-  const handleEditVideo = videoId => {
-    navigate(`/video/edit/${videoId}`);
-  };
-
-  if (videos.status === 'error') return <Error />;
+  if (videosStatus === STATUS.FAILED) return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -70,15 +68,17 @@ export const VideoPage = () => {
         onConfirm={confirmDialog.onConfirm}
         onClose={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
-      <Intro />
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: { xs: 2, md: 4 },
-          px: { xs: 1, sm: 2, md: 3 },
+      <PageLayout
+        title={'Video'}
+        buttonTitle={'Upload a Video'}
+        to={'/video/upload'}
+        containerProps={{
+          sx: {
+            py: { xs: 2, md: 4 },
+            px: { xs: 1, sm: 2, md: 3 },
+          },
         }}
       >
-        <Header title={'Video'} buttonTitle={'Upload a Video'} to={'/video/upload'} />
         {!isAuth && (
           <Typography
             variant="body1"
@@ -109,7 +109,7 @@ export const VideoPage = () => {
               gap: { xs: 2, md: 3 },
             }}
           >
-            {(isVideosLoading ? [...Array(3)] : videos.items).map((video, index) =>
+            {(isVideosLoading ? [...Array(3)] : videos).map((video, index) =>
               isVideosLoading ? (
                 <PostSkeleton key={index} />
               ) : (
@@ -122,10 +122,9 @@ export const VideoPage = () => {
                   createdAt={video.createdAt}
                   views={video.views}
                   likes={video.likes}
-                  isEditable={userData?._id === video.user._id}
+                  isEditable={Boolean(userData?._id) && userData._id === video.user?._id}
                   videoUrl={video.url ? video.url : ''}
                   onRemove={handleDeleteClick}
-                  onEdit={handleEditVideo}
                 />
               )
             )}
@@ -146,7 +145,7 @@ export const VideoPage = () => {
             </div>
           </Grid>
         </Grid>
-      </Container>
+      </PageLayout>
     </Box>
   );
 };

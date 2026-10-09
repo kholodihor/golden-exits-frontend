@@ -67,22 +67,6 @@
         font-size: 0.8rem;
       }
     }
-
-    .logout {
-      padding: 0.5rem 1.3rem;
-      outline: none;
-      border-radius: 0.2rem;
-      background: #fff;
-      color: var(--red);
-      text-transform: uppercase;
-      border: 1px solid var(--red);
-
-      &:hover {
-        background: var(--red);
-        color: #fff;
-        border: 1px solid transparent;
-      }
-    }
   }
 
   .userActions {
@@ -93,24 +77,6 @@
     @media screen and (max-width: 480px) {
       flex-direction: column;
       width: 100%;
-    }
-
-    .avatarBox {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-direction: column;
-
-      img {
-        width: 3rem;
-        height: 3rem;
-        border-radius: 100%;
-        object-fit: cover;
-      }
-
-      span {
-        font-size: 0.7rem;
-      }
     }
   }
 }

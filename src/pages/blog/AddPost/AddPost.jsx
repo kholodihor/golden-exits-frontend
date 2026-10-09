@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
-import { selectIsAuth } from '@/redux/slices/auth';
+import { selectIsAuth, selectIsAuthPending } from '@/redux/slices/auth';
 import { useSelector } from 'react-redux';
-import { Container, CircularProgress, Alert, Snackbar } from '@mui/material';
+import { Container, Alert, Snackbar } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -12,10 +12,44 @@ import axios from '@/utils/axios';
 import styles from './AddPost.module.scss';
 import 'easymde/dist/easymde.min.css';
 
+// Kept at module scope so SimpleMDE is not re-instantiated (losing cursor/focus)
+// whenever component state such as `loading` changes.
+const EDITOR_OPTIONS = {
+  spellChecker: false,
+  maxHeight: '40vh',
+  autofocus: true,
+  placeholder: 'Content of Your Post',
+  status: false,
+  autosave: {
+    enabled: false,
+    uniqueId: 'postContent',
+    delay: 1000,
+  },
+  toolbar: [
+    'bold',
+    'italic',
+    'heading',
+    '|',
+    'quote',
+    'unordered-list',
+    'ordered-list',
+    '|',
+    'link',
+    'image',
+    '|',
+    'preview',
+    'side-by-side',
+    'fullscreen',
+    '|',
+    'guide',
+  ],
+};
+
 export const AddPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
+  const isAuthPending = useSelector(selectIsAuthPending);
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
@@ -80,6 +114,8 @@ export const AddPost = () => {
 
   const removeImage = () => {
     setImage('');
+    // Reset the file input so selecting the same file again still fires onChange.
+    if (inputFileRef.current) inputFileRef.current.value = '';
   };
 
   const addText = useCallback(value => {
@@ -101,9 +137,9 @@ export const AddPost = () => {
     setError('');
 
     try {
-      // Upload image first if it's a new image (not a URL from edit)
+      // Upload image first if it's a new local image (data URL), not an existing URL from edit
       let imageUrl = image;
-      if (image && !image.startsWith('http')) {
+      if (image && image.startsWith('data:')) {
         const { data } = await axios.post('/upload', { image });
         imageUrl = data.url;
       }
@@ -150,76 +186,20 @@ export const AddPost = () => {
     }
   }, [id]);
 
-  const options = useMemo(
-    () => ({
-      spellChecker: false,
-      maxHeight: '40vh',
-      autofocus: true,
-      placeholder: 'Content of Your Post',
-      status: false,
-      autosave: {
-        enabled: false,
-        uniqueId: 'postContent',
-        delay: 1000,
-      },
-      toolbar: loading
-        ? false
-        : [
-            'bold',
-            'italic',
-            'heading',
-            '|',
-            'quote',
-            'unordered-list',
-            'ordered-list',
-            '|',
-            'link',
-            'image',
-            '|',
-            'preview',
-            'side-by-side',
-            'fullscreen',
-            '|',
-            'guide',
-          ],
-    }),
-    [loading]
-  );
-
-  // Memoize the editor value to prevent unnecessary re-renders
-  const editorValue = useMemo(() => text, [text]);
-
   const handleCloseSnackbar = () => {
     setError('');
   };
 
-  if (!window.localStorage.getItem('token') && !isAuth) {
+  // Wait for fetchUser to settle on a hard reload before deciding to redirect.
+  if (isAuthPending) return null;
+
+  if (!isAuth) {
     return <Navigate to="/" />;
   }
 
   return (
     <Container maxWidth="lg" style={{ padding: '2rem 0' }}>
       <Paper style={{ padding: 30, position: 'relative' }}>
-        {/* {(loading || uploading) && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '80vw',
-              backgroundColor: 'background.paper',
-              boxShadow: 24,
-              p: 4,
-              outline: 'none',
-              alignItems: 'center',
-              zIndex: 10,
-            }}
-          >
-            <CircularProgress />
-          </div>
-        )} */}
-
         <Button
           onClick={() => inputFileRef.current.click()}
           size="large"
@@ -266,7 +246,7 @@ export const AddPost = () => {
           value={title}
           onChange={e => setTitle(e.target.value)}
           onBlur={() => handleBlur('title')}
-          error={showError('title')}
+          error={Boolean(showError('title'))}
           helperText={showError('title') ? errors.title : ' '}
           fullWidth
         />
@@ -274,10 +254,10 @@ export const AddPost = () => {
           <SimpleMDE
             key={isEditing ? 'edit' : 'create'} // Force re-render when switching modes
             className={styles.editor}
-            value={editorValue}
+            value={text}
             onChange={addText}
             onBlur={() => handleBlur('text')}
-            options={options}
+            options={EDITOR_OPTIONS}
           />
           {showError('text') && (
             <div

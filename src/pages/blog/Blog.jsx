@@ -1,40 +1,43 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts } from '@/redux/slices/posts';
+import { fetchPosts, selectPosts, selectPostsStatus } from '@/redux/slices/posts';
+import { STATUS } from '@/redux/status';
 import { selectIsAuth } from '@/redux/slices/auth';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import { Post } from '@/components/blog/Post/Post';
 import { BlogAside } from '@/components/blog/BlogAside/BlogAside';
 import { PostSkeleton } from '@/components/blog/Post/PostSkeleton';
-import Header from '@/components/common/Header/Header';
-import Intro from '@/components/common/Intro/Intro';
+import { PageLayout } from '@/components/common/PageLayout/PageLayout';
 import Error from '@/components/common/Error/Error';
 
 export const Blog = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const userData = useSelector(state => state?.auth?.data);
-  const { posts } = useSelector(state => state.posts);
+  const posts = useSelector(selectPosts);
+  const postsStatus = useSelector(selectPostsStatus);
 
-  const isPostsLoading = posts.status === 'loading';
+  const isPostsLoading = postsStatus === STATUS.LOADING;
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  if (posts.status === 'error') return <Error />;
+  if (postsStatus === STATUS.FAILED) return <Error />;
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <Intro />
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: { xs: 2, md: 4 },
-          px: { xs: 1, sm: 2, md: 3 },
+      <PageLayout
+        title="Blog"
+        buttonTitle="Write a post"
+        to="/add-post"
+        containerProps={{
+          sx: {
+            py: { xs: 2, md: 4 },
+            px: { xs: 1, sm: 2, md: 3 },
+          },
         }}
       >
-        <Header title="Blog" buttonTitle="Write a post" to="/add-post" />
         {!isAuth && (
           <Typography
             variant="body1"
@@ -66,7 +69,7 @@ export const Blog = () => {
               gap: { xs: 2, md: 3 },
             }}
           >
-            {(isPostsLoading ? [...Array(3)] : posts.items).map((post, index) =>
+            {(isPostsLoading ? [...Array(3)] : posts).map((post, index) =>
               isPostsLoading ? (
                 <PostSkeleton key={index} />
               ) : (
@@ -80,7 +83,7 @@ export const Blog = () => {
                   createdAt={post.createdAt}
                   likes={post.likes}
                   comments={post.comments}
-                  isEditable={userData?._id === post.user._id}
+                  isEditable={Boolean(userData?._id) && userData._id === post.user?._id}
                 />
               )
             )}
@@ -99,7 +102,7 @@ export const Blog = () => {
             <BlogAside />
           </Grid>
         </Grid>
-      </Container>
+      </PageLayout>
     </Box>
   );
 };

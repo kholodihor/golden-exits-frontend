@@ -47,30 +47,6 @@
         color: var(--golden);
       }
     }
-    .subtitle {
-      position: relative;
-      font-size: 0.8rem;
-      color: #ccc;
-      text-transform: uppercase;
-      letter-spacing: 0.1rem;
-      margin-left: 4rem;
-      @media screen and (max-width: 650px) {
-        text-align: center;
-        margin-left: 0;
-      }
-      &::before {
-        content: '';
-        position: absolute;
-        top: 40%;
-        left: -40%;
-        width: 4rem;
-        height: 0.05rem;
-        background: #ccc;
-        @media screen and (max-width: 650px) {
-          display: none;
-        }
-      }
-    }
   }
   .right {
     position: relative;

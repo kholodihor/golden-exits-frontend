@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { addProduct } from '@/redux/slices/cart';
@@ -6,11 +6,14 @@ import Navbar from '@/components/shop/Navbar/Navbar';
 import Notification from '@/components/common/Notification/Notification';
 import styles from './Product.module.scss';
 import axios from '@/utils/axios';
+import { logger } from '@/utils/logger';
+import Error from '@/components/common/Error/Error';
 
 export const Product = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState(null);
+  const [status, setStatus] = useState('loading');
   const [quantity, setQuantity] = useState(0);
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -19,23 +22,27 @@ export const Product = () => {
   });
 
   useEffect(() => {
+    const controller = new AbortController();
+    setProduct(null);
+    setStatus('loading');
+    setQuantity(0);
     const getProduct = async () => {
       try {
-        const res = await axios.get(`/product/${id}`);
+        const res = await axios.get(`/product/${id}`, { signal: controller.signal });
         setProduct(res.data);
+        setStatus('loaded');
       } catch (error) {
-        console.log(error);
+        if (controller.signal.aborted) return;
+        logger.error('Failed to fetch product:', error);
+        setStatus('error');
       }
     };
     getProduct();
+    return () => controller.abort();
   }, [id]);
 
   const decrease = () => {
-    if (quantity !== 0) {
-      setQuantity(prev => prev - 1);
-    } else {
-      setQuantity(0);
-    }
+    setQuantity(prev => Math.max(0, prev - 1));
   };
 
   const increase = () => {
@@ -43,13 +50,26 @@ export const Product = () => {
   };
 
   const addToCart = () => {
+    if (!product || !quantity) return;
     dispatch(addProduct({ product, quantity, price: product.price }));
+    setQuantity(0);
     setNotify({
       isOpen: true,
       message: `"${product.title}" added to cart`,
       type: 'success',
     });
   };
+
+  if (status === 'error') return <Error />;
+
+  if (!product) {
+    return (
+      <div className={styles.Product}>
+        <Navbar />
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.Product}>
@@ -61,11 +81,15 @@ export const Product = () => {
         <div className={styles.content}>
           <h1 className={styles.title}>{product.title}</h1>
           <p className={styles.desc}>{product.desc}</p>
-          <p className={styles.price}>${product.price}</p>
+          <p className={styles.price}>${Number(product.price || 0).toFixed(2)}</p>
           <div className={styles.quantity}>
-            <span onClick={decrease}>-</span>
+            <button type="button" onClick={decrease} aria-label="Decrease quantity">
+              -
+            </button>
             <span>{quantity}</span>
-            <span onClick={increase}>+</span>
+            <button type="button" onClick={increase} aria-label="Increase quantity">
+              +
+            </button>
           </div>
           <button className={styles.button} disabled={!quantity} onClick={addToCart}>
             add to cart

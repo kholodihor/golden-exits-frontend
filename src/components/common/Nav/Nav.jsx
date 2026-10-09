@@ -1,11 +1,9 @@
 import { NavLink } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import { links } from '@/utils/data';
 import styles from './Nav.module.scss';
 import { FaFacebook, FaTwitter, FaTelegram, FaVimeo, FaPinterest } from 'react-icons/fa';
 
 const Nav = () => {
-  const route = useLocation();
   return (
     <div className={styles.Nav}>
       <nav className={styles.nav}>
@@ -37,9 +35,13 @@ const Nav = () => {
           </li>
         </ul>
         <ul className={styles.menu}>
-          {links.map((link, index) => (
-            <li key={index}>
-              <NavLink to={link.to} className={route.pathname === link.to ? styles.active : ''}>
+          {links.map(link => (
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                end={link.to === '/'}
+                className={({ isActive }) => (isActive ? styles.active : '')}
+              >
                 {link.name}
               </NavLink>
             </li>

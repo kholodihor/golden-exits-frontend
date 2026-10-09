@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { logger } from '@/utils/logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import { FavoriteBorderOutlined, FavoriteOutlined } from '@mui/icons-material';
-import { Paper, Typography, Skeleton } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 import styles from './Post.module.scss';
 import Confirm from '@/components/common/Confirm/Confirm';
@@ -26,7 +26,7 @@ export const Post = ({
   likes = {},
   comments = [],
   isFullPost,
-  isLoading,
+  onRemoved,
 }) => {
   const dispatch = useDispatch();
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -34,6 +34,18 @@ export const Post = ({
   const userId = useSelector(state => state?.auth?.data?._id);
   const [isLiked, setIsLiked] = useState(Boolean(likes[userId]));
   const [likeCount, setLikeCount] = useState(Object.keys(likes).length || 0);
+  const likeInFlight = useRef(false);
+
+  // Auth data usually arrives after the first render; resync once userId/likes are known.
+  useEffect(() => {
+    setIsLiked(Boolean(userId && likes?.[userId]));
+    setLikeCount(Object.keys(likes || {}).length);
+  }, [userId, likes]);
+
+  // Resync the comments counter when the source prop changes.
+  useEffect(() => {
+    setCommentsCount(comments?.length);
+  }, [comments?.length]);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -42,12 +54,17 @@ export const Post = ({
   });
 
   const handleLike = useCallback(async () => {
+    if (!userId || likeInFlight.current) return;
+    likeInFlight.current = true;
+    const wasLiked = isLiked;
     try {
-      await axios.patch(`posts/${id}/like`, { userId });
-      setIsLiked(prev => !prev);
-      setLikeCount(prev => (isLiked ? prev - 1 : prev + 1));
+      await axios.patch(`/posts/${id}/like`);
+      setIsLiked(!wasLiked);
+      setLikeCount(prev => (wasLiked ? prev - 1 : prev + 1));
     } catch (error) {
       logger.error('Error updating like:', error);
+    } finally {
+      likeInFlight.current = false;
     }
   }, [id, userId, isLiked]);
 
@@ -61,6 +78,7 @@ export const Post = ({
           .unwrap()
           .then(() => {
             setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+            onRemoved?.();
           })
           .catch(error => {
             logger.error('Error removing post:', error);
@@ -68,53 +86,45 @@ export const Post = ({
           });
       },
     });
-  }, [id, dispatch]);
+  }, [id, dispatch, onRemoved]);
 
   const toggleComments = useCallback(() => {
     setCommentsOpen(prev => !prev);
   }, []);
 
-  if (isLoading) {
-    return (
-      <Paper className={styles.Post}>
-        <Skeleton variant="rectangular" width="100%" height={300} />
-        <div className={styles.wrapper}>
-          <Skeleton variant="text" width={200} />
-          <Skeleton variant="text" width="100%" />
-          <Skeleton variant="text" width="100%" />
-        </div>
-      </Paper>
-    );
-  }
+  const ownerButtons = (
+    <>
+      <IconButton
+        component={Link}
+        to={`/edit-post/${id}`}
+        className={styles.edit}
+        aria-label="Edit post"
+      >
+        <EditIcon />
+      </IconButton>
+      <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
+        <DeleteIcon />
+      </IconButton>
+    </>
+  );
 
   return (
     <>
       <Paper className={styles.Post}>
-        {isEditable && (
-          <div className={styles.editButtons}>
-            <Link to={`/edit-post/${id}`}>
-              <IconButton className={styles.edit} aria-label="Edit post">
-                <EditIcon />
-              </IconButton>
-            </Link>
-            <IconButton onClick={handleRemove} className={styles.delete} aria-label="Delete post">
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        )}
+        {isEditable && imageUrl && <div className={styles.editButtons}>{ownerButtons}</div>}
         {imageUrl && <img className={styles.image} src={imageUrl} alt={title} loading="lazy" />}
         <div className={styles.wrapper}>
           <div className={styles.wrapperHeader}>
             <UserInfo {...user} createdAt={createdAt} />
             <div className={styles.actions}>
               <div className={styles.comments} onClick={toggleComments}>
-                <IconButton aria-label="Comments">
+                <IconButton aria-expanded={commentsOpen} aria-label="Comments">
                   <CommentIcon />
                 </IconButton>
                 <span>{commentsCount}</span>
               </div>
               <div className={styles.likes}>
-                <IconButton onClick={handleLike} aria-label="Like post">
+                <IconButton onClick={handleLike} aria-label="Like post" disabled={!userId}>
                   {isLiked ? (
                     <FavoriteOutlined style={{ color: 'var(--red)' }} />
                   ) : (
@@ -123,6 +133,7 @@ export const Post = ({
                 </IconButton>
                 <span>{likeCount}</span>
               </div>
+              {isEditable && !imageUrl && ownerButtons}
             </div>
           </div>
           <Typography variant="h5" component="h2" className={styles.title}>

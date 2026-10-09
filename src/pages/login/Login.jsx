@@ -1,28 +1,29 @@
 import * as yup from 'yup';
-import { useIsAuth } from '@/hooks/useIsAuth';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Navigate } from 'react-router-dom';
-import { loginUser } from '@/redux/slices/auth';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { loginUser, selectIsAuth } from '@/redux/slices/auth';
 import { useForm } from 'react-hook-form';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import { AuthCard } from '@/components/common/AuthCard/AuthCard';
 import styles from './Login.module.scss';
 
-export const Login = () => {
-  const isAuth = useIsAuth();
-  const dispatch = useDispatch();
+const schema = yup.object().shape({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters'),
+});
 
-  const schema = yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .min(5, 'Password must be at least 5 characters'),
-  });
+export const Login = () => {
+  const [submitError, setSubmitError] = useState('');
+  const isAuth = useSelector(selectIsAuth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -38,15 +39,14 @@ export const Login = () => {
   });
 
   const onSubmit = async values => {
-    const data = await dispatch(loginUser(values));
-
-    if (!data.payload) {
-      return alert('Authorization Failed');
+    setSubmitError('');
+    try {
+      await dispatch(loginUser(values)).unwrap();
+    } catch (error) {
+      setSubmitError(error?.message || 'Authorization failed');
+      return;
     }
-
-    if ('token' in data.payload) {
-      window.localStorage.setItem('token', data.payload.token);
-    }
+    navigate('/');
   };
 
   if (isAuth) {
@@ -55,10 +55,12 @@ export const Login = () => {
 
   return (
     <Container classes={{ root: styles.wrapper }}>
-      <Paper classes={{ root: styles.form }}>
-        <Typography classes={{ root: styles.title }} variant="h5">
-          Enter to Account
-        </Typography>
+      <AuthCard
+        className={styles.form}
+        titleClassName={styles.title}
+        title="Enter to Account"
+        error={submitError}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             className={styles.field}
@@ -66,22 +68,25 @@ export const Login = () => {
             error={Boolean(errors.email?.message)}
             helperText={errors.email?.message}
             type="email"
-            {...register('email', { required: 'Enter Email' })}
+            autoComplete="email"
+            {...register('email')}
             fullWidth
           />
           <TextField
             className={styles.field}
             label="Password"
+            type="password"
+            autoComplete="current-password"
             error={Boolean(errors.password?.message)}
             helperText={errors.password?.message}
-            {...register('password', { required: 'Enter Password' })}
+            {...register('password')}
             fullWidth
           />
           <Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>
             LogIn
           </Button>
         </form>
-      </Paper>
+      </AuthCard>
     </Container>
   );
 };

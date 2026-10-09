@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createComment, getPostComments } from '@/redux/slices/comment';
+import {
+  createComment,
+  getPostComments,
+  selectPostComments,
+  selectPostCommentsLoading,
+} from '@/redux/slices/comment';
 import { useForm } from 'react-hook-form';
 import { logger } from '@/utils/logger';
 import { PostSkeleton } from '../Post/PostSkeleton';
@@ -9,14 +14,12 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import styles from './Comments.module.scss';
 
-export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) => {
+export const Comments = ({ postId, onCommentAdd }) => {
   const dispatch = useDispatch();
-  const commentState = useSelector(state => state.comment);
-  const { comments } = commentState;
+  const comments = useSelector(state => selectPostComments(state, postId));
+  const loading = useSelector(state => selectPostCommentsLoading(state, postId));
   const currentUser = useSelector(state => state.auth.data);
 
-  console.log('Comments component - postId:', postId);
-  console.log('Comments component - Redux comment state:', commentState);
   const {
     register,
     handleSubmit,
@@ -29,8 +32,6 @@ export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) =>
     mode: 'onChange',
   });
 
-  // Use loading state from Redux store
-  const { loading } = useSelector(state => state.comment);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async values => {
@@ -43,18 +44,7 @@ export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) =>
       setSubmitting(true);
       const comment = values.comment;
 
-      await dispatch(
-        createComment({
-          postId,
-          comment,
-          userId: currentUser._id,
-          user: {
-            username: currentUser.username || 'User',
-            avatarUrl: currentUser.avatarUrl || '',
-            fullName: currentUser.fullName || '',
-          },
-        })
-      ).unwrap();
+      await dispatch(createComment({ postId, comment })).unwrap();
 
       onCommentAdd && onCommentAdd();
       reset({ comment: '' });
@@ -78,17 +68,12 @@ export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) =>
       return <div className={styles.noComments}>No comments yet</div>;
     }
 
-    return comments.map((item, index) => {
-      // Handle different comment structure formats
-      const commentData = item.newComment || item;
-
-      // Handle different user data formats
-      // If user is an object, use it directly; if it's an ID, use currentUser as fallback
-      // This ensures we use the same avatar URL format as in the Header component
+    return comments.map((commentData, index) => {
+      // The server populates `user`; fall back to the current user if it ever arrives unpopulated.
       const userData = typeof commentData.user === 'object' ? commentData.user : currentUser;
 
       return (
-        <div key={index} className={styles.comment}>
+        <div key={commentData._id || index} className={styles.comment}>
           <UserInfo
             avatarUrl={userData?.avatarUrl}
             username={userData?.username || 'User'}

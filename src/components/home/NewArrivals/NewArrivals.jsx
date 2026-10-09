@@ -3,28 +3,24 @@ import na2 from '@/assets/img/arrivals/new-arrival-2.jpg';
 import na3 from '@/assets/img/arrivals/new-arrival-3.jpg';
 import styles from './NewArrivals.module.scss';
 
+const arrivals = [
+  { key: 'summer', src: na1, alt: 'summer collection', word: 'Summer', rest: 'collection' },
+  { key: 'quality', src: na2, alt: 'best quality', word: 'best', rest: 'quality' },
+  { key: 'autumn', src: na3, alt: 'autumn collection', word: 'Autumn', rest: 'collection' },
+];
+
 const NewArrivals = () => {
   return (
     <section className={styles.Arrivals}>
       <div className={styles.images}>
-        <div className={styles.image}>
-          <img src={na1} alt="summer collection" />
-          <div className={styles.inner_text}>
-            <span>Summer</span> collection
+        {arrivals.map(({ key, src, alt, word, rest }) => (
+          <div className={styles.image} key={key}>
+            <img src={src} alt={alt} />
+            <div className={styles.inner_text}>
+              <span>{word}</span> {rest}
+            </div>
           </div>
-        </div>
-        <div className={styles.image}>
-          <img src={na2} alt="best quality" />
-          <div className={styles.inner_text}>
-            <span>best</span> quality
-          </div>
-        </div>
-        <div className={styles.image}>
-          <img src={na3} alt="autumn collection" />
-          <div className={styles.inner_text}>
-            <span>Autumn</span> collection
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );

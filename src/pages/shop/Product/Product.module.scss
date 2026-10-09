@@ -90,7 +90,8 @@
           padding: 0.5rem 0;
         }
 
-        span {
+        span,
+        button {
           padding: 0.5rem 1rem;
           font-size: 1.2rem;
           color: var(--lightgray);
@@ -110,6 +111,13 @@
               color: var(--lightgray);
             }
           }
+        }
+
+        button {
+          border: none;
+          background: none;
+          font-family: inherit;
+          cursor: pointer;
         }
       }
 
