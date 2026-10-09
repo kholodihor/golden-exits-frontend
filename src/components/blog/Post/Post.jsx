@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import { FavoriteBorderOutlined, FavoriteOutlined } from '@mui/icons-material';
-import { Paper, Typography, Skeleton } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 import styles from './Post.module.scss';
 import Confirm from '@/components/common/Confirm/Confirm';
@@ -26,7 +26,6 @@ export const Post = ({
   likes = {},
   comments = [],
   isFullPost,
-  isLoading,
 }) => {
   const dispatch = useDispatch();
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -85,19 +84,6 @@ export const Post = ({
   const toggleComments = useCallback(() => {
     setCommentsOpen(prev => !prev);
   }, []);
-
-  if (isLoading) {
-    return (
-      <Paper className={styles.Post}>
-        <Skeleton variant="rectangular" width="100%" height={300} />
-        <div className={styles.wrapper}>
-          <Skeleton variant="text" width={200} />
-          <Skeleton variant="text" width="100%" />
-          <Skeleton variant="text" width="100%" />
-        </div>
-      </Paper>
-    );
-  }
 
   return (
     <>

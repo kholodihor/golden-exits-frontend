@@ -22,9 +22,6 @@ import menaccs3 from '@/assets/img/accesoires/maccesoires3.jpg';
 import womenaccs1 from '@/assets/img/accesoires/waccesoires1.jpg';
 import womenaccs2 from '@/assets/img/accesoires/waccesoires2.jpg';
 import womenaccs3 from '@/assets/img/accesoires/waccesoires3.jpg';
-import slider1 from '@/assets/img/slider/slider1.jpg';
-import slider2 from '@/assets/img/slider/slider2.jpg';
-import slider3 from '@/assets/img/slider/slider3.jpg';
 
 export const tabspanels = [
   {
@@ -63,5 +60,3 @@ export const links = [
     to: '/video',
   },
 ];
-
-export const sliderData = [slider1, slider2, slider3];

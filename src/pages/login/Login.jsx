@@ -12,18 +12,18 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import styles from './Login.module.scss';
 
+const schema = yup.object().shape({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(5, 'Password must be at least 5 characters'),
+});
+
 export const Login = () => {
   const isAuth = useIsAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const schema = yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .min(5, 'Password must be at least 5 characters'),
-  });
 
   const {
     register,
@@ -70,7 +70,7 @@ export const Login = () => {
             helperText={errors.email?.message}
             type="email"
             autoComplete="email"
-            {...register('email', { required: 'Enter Email' })}
+            {...register('email')}
             fullWidth
           />
           <TextField
@@ -80,7 +80,7 @@ export const Login = () => {
             autoComplete="current-password"
             error={Boolean(errors.password?.message)}
             helperText={errors.password?.message}
-            {...register('password', { required: 'Enter Password' })}
+            {...register('password')}
             fullWidth
           />
           <Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>

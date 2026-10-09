@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createComment,
@@ -14,7 +14,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import styles from './Comments.module.scss';
 
-export const Comments = ({ postId, _userId, onCommentAdd, _onCommentRemove }) => {
+export const Comments = ({ postId, onCommentAdd }) => {
   const dispatch = useDispatch();
   const comments = useSelector(state => selectPostComments(state, postId));
   const loading = useSelector(state => selectPostCommentsLoading(state, postId));

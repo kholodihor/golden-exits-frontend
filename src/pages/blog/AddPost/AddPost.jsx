@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import { selectIsAuth } from '@/redux/slices/auth';
 import { useSelector } from 'react-redux';
-import { Container, CircularProgress, Alert, Snackbar } from '@mui/material';
+import { Container, Alert, Snackbar } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -185,9 +185,6 @@ export const AddPost = () => {
     }
   }, [id]);
 
-  // Memoize the editor value to prevent unnecessary re-renders
-  const editorValue = useMemo(() => text, [text]);
-
   const handleCloseSnackbar = () => {
     setError('');
   };
@@ -199,26 +196,6 @@ export const AddPost = () => {
   return (
     <Container maxWidth="lg" style={{ padding: '2rem 0' }}>
       <Paper style={{ padding: 30, position: 'relative' }}>
-        {/* {(loading || uploading) && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '80vw',
-              backgroundColor: 'background.paper',
-              boxShadow: 24,
-              p: 4,
-              outline: 'none',
-              alignItems: 'center',
-              zIndex: 10,
-            }}
-          >
-            <CircularProgress />
-          </div>
-        )} */}
-
         <Button
           onClick={() => inputFileRef.current.click()}
           size="large"
@@ -273,7 +250,7 @@ export const AddPost = () => {
           <SimpleMDE
             key={isEditing ? 'edit' : 'create'} // Force re-render when switching modes
             className={styles.editor}
-            value={editorValue}
+            value={text}
             onChange={addText}
             onBlur={() => handleBlur('text')}
             options={EDITOR_OPTIONS}

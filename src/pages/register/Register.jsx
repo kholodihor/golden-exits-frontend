@@ -14,19 +14,19 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import styles from './Register.module.scss';
 
+const schema = yup.object().shape({
+  username: yup.string().min(2).required('Name is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup
+    .string()
+    .min(5, 'Password must be at least 5 characters')
+    .required('Password is required'),
+});
+
 export const Register = () => {
   const [avatarPreview, setAvatarPreview] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const schema = yup.object().shape({
-    username: yup.string().min(2).required('Name is required'),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-      .string()
-      .min(5, 'Password must be at least 5 characters')
-      .required('Password is required'),
-  });
 
   const {
     register,
@@ -107,7 +107,7 @@ export const Register = () => {
         <TextField
           error={Boolean(errors.username?.message)}
           helperText={errors.username?.message}
-          {...register('username', { required: 'Enter Your Username' })}
+          {...register('username')}
           className={styles.field}
           label="Username"
           fullWidth
@@ -117,7 +117,7 @@ export const Register = () => {
           helperText={errors.email?.message}
           type="email"
           autoComplete="email"
-          {...register('email', { required: 'Enter Your Email' })}
+          {...register('email')}
           className={styles.field}
           label="E-Mail"
           fullWidth
@@ -127,7 +127,7 @@ export const Register = () => {
           helperText={errors.password?.message}
           type="password"
           autoComplete="new-password"
-          {...register('password', { required: 'Enter your Password' })}
+          {...register('password')}
           className={styles.field}
           label="Password"
           fullWidth
